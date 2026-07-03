@@ -120,12 +120,52 @@ function Reticle({ onPlace }) {
 // ---------------------------------------------------------------------------
 // 3. Spinner khi tải model + fallback khi model lỗi.
 // ---------------------------------------------------------------------------
+// Nội suy mượt: giá trị hiển thị "đuổi theo" tiến độ thật mỗi khung hình, nên dù
+// useProgress nhảy theo chunk mạng (0→73→100) thì ring + số vẫn chạy trơn.
+function useSmoothProgress(target) {
+    const [display, setDisplay] = useState(0);
+    const targetRef = useRef(target);
+    targetRef.current = target;
+    const curRef = useRef(0);
+    useEffect(() => {
+        let raf;
+        const tick = () => {
+            const t = targetRef.current;
+            curRef.current += (t - curRef.current) * 0.12;
+            if (Math.abs(t - curRef.current) < 0.2) curRef.current = t;
+            setDisplay(curRef.current);
+            raf = requestAnimationFrame(tick);
+        };
+        raf = requestAnimationFrame(tick);
+        return () => cancelAnimationFrame(raf);
+    }, []);
+    return display;
+}
+
 function Loader() {
     const { progress } = useProgress();
+    const p = useSmoothProgress(progress);
+    const R = 34;
+    const CIRC = 2 * Math.PI * R;
+
     return (
         <Html center>
             <div className="loader">
-                Đang tải nhân vật… {Math.round(progress)}%
+                <div className="loader-ring-wrap">
+                    <svg className="loader-ring" viewBox="0 0 80 80">
+                        <circle className="loader-track" cx="40" cy="40" r={R} />
+                        <circle
+                            className="loader-fill"
+                            cx="40"
+                            cy="40"
+                            r={R}
+                            strokeDasharray={CIRC}
+                            strokeDashoffset={CIRC * (1 - p / 100)}
+                        />
+                    </svg>
+                    <span className="loader-pct">{Math.round(p)}%</span>
+                </div>
+                <span className="loader-label">Đang tải nhân vật…</span>
             </div>
         </Html>
     );
@@ -151,7 +191,6 @@ function CharacterViewer({
     style,
     captureRef,
     autoRotate = true,
-    controlsRef,
 }) {
     const [placedPosition, setPlacedPosition] = useState(null);
     const { main, light } = character.accent;
@@ -198,7 +237,6 @@ function CharacterViewer({
                         {!placedPosition && (
                             <>
                                 <OrbitControls
-                                    ref={controlsRef}
                                     makeDefault
                                     autoRotate={autoRotate}
                                     autoRotateSpeed={1.5}
@@ -209,7 +247,7 @@ function CharacterViewer({
                                     khấu (mọi model + mọi tỉ lệ màn hình), không
                                     còn bé xíu/trôi lên đỉnh. Center bottom giữ
                                     chân model chạm đất y=0 cho bóng đổ đúng. */}
-                                <Bounds fit clip margin={1.15}>
+                                <Bounds fit clip margin={1.8}>
                                     <Center bottom>
                                         <ProductModel
                                             url={character.model}
@@ -494,7 +532,6 @@ function InfoPage({ character, onView3D, onBack }) {
 // ---------------------------------------------------------------------------
 function View3DPage({ character, onBack }) {
     const captureRef = useRef(null);
-    const controlsRef = useRef(null);
     const [autoRotate, setAutoRotate] = useState(true);
 
     // AR chỉ khả dụng trên thiết bị hỗ trợ WebXR immersive-ar (điện thoại/headset,
@@ -536,12 +573,11 @@ function View3DPage({ character, onBack }) {
                 <CharacterViewer
                     character={character}
                     captureRef={captureRef}
-                    controlsRef={controlsRef}
                     autoRotate={autoRotate}
                     style={{ width: "100%", height: "100%" }}
                 />
 
-                {/* Thanh công cụ nổi: xoay tự động · đặt lại góc · chụp ảnh */}
+                {/* Thanh công cụ nổi: xoay tự động · chụp ảnh */}
                 <div className="v3d-tools">
                     <button
                         className="v3d-tool"
@@ -550,13 +586,6 @@ function View3DPage({ character, onBack }) {
                         aria-pressed={autoRotate}
                     >
                         {autoRotate ? "⏸" : "▶"}
-                    </button>
-                    <button
-                        className="v3d-tool"
-                        onClick={() => controlsRef.current?.reset()}
-                        title="Đặt lại góc nhìn"
-                    >
-                        ⟲
                     </button>
                     <button
                         className="v3d-tool"
