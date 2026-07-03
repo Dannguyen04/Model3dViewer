@@ -18,7 +18,10 @@ import {
     OrbitControls,
     useGLTF,
     useAnimations,
+    useProgress,
     Clone,
+    Center,
+    Bounds,
     ContactShadows,
     Html,
 } from "@react-three/drei";
@@ -118,9 +121,12 @@ function Reticle({ onPlace }) {
 // 3. Spinner khi tải model + fallback khi model lỗi.
 // ---------------------------------------------------------------------------
 function Loader() {
+    const { progress } = useProgress();
     return (
         <Html center>
-            <div className="loader">Đang tải nhân vật…</div>
+            <div className="loader">
+                Đang tải nhân vật… {Math.round(progress)}%
+            </div>
         </Html>
     );
 }
@@ -140,14 +146,20 @@ function ModelFallback() {
 // ---------------------------------------------------------------------------
 // 4. Viewer 3D cho MỘT nhân vật. Đèn viền lấy màu accent của nhân vật đó.
 // ---------------------------------------------------------------------------
-function CharacterViewer({ character, style, captureRef }) {
+function CharacterViewer({
+    character,
+    style,
+    captureRef,
+    autoRotate = true,
+    controlsRef,
+}) {
     const [placedPosition, setPlacedPosition] = useState(null);
     const { main, light } = character.accent;
 
     return (
         <Canvas
             style={style}
-            camera={{ position: [0, 0.3, 1.2], fov: 45 }}
+            camera={{ position: [0, 0.3, 1.4], fov: 40 }}
             gl={{ preserveDrawingBuffer: true, antialias: true }}
             onCreated={({ gl, scene, camera }) => {
                 if (captureRef) captureRef.current = { gl, scene, camera };
@@ -186,17 +198,28 @@ function CharacterViewer({ character, style, captureRef }) {
                         {!placedPosition && (
                             <>
                                 <OrbitControls
-                                    autoRotate
+                                    ref={controlsRef}
+                                    makeDefault
+                                    autoRotate={autoRotate}
+                                    autoRotateSpeed={1.5}
                                     enableZoom
                                     enablePan={false}
                                 />
-                                <ProductModel
-                                    url={character.model}
-                                    scale={character.scale}
-                                    position={[0, 0, 0]}
-                                />
+                                {/* Bounds tự canh khung: model luôn lấp đầy sân
+                                    khấu (mọi model + mọi tỉ lệ màn hình), không
+                                    còn bé xíu/trôi lên đỉnh. Center bottom giữ
+                                    chân model chạm đất y=0 cho bóng đổ đúng. */}
+                                <Bounds fit clip margin={1.15}>
+                                    <Center bottom>
+                                        <ProductModel
+                                            url={character.model}
+                                            scale={character.scale}
+                                            position={[0, 0, 0]}
+                                        />
+                                    </Center>
+                                </Bounds>
                                 <ContactShadows
-                                    position={[0, -0.001, 0]}
+                                    position={[0, 0, 0]}
                                     opacity={0.6}
                                     scale={2}
                                     blur={2}
@@ -471,6 +494,22 @@ function InfoPage({ character, onView3D, onBack }) {
 // ---------------------------------------------------------------------------
 function View3DPage({ character, onBack }) {
     const captureRef = useRef(null);
+    const controlsRef = useRef(null);
+    const [autoRotate, setAutoRotate] = useState(true);
+
+    // AR chỉ khả dụng trên thiết bị hỗ trợ WebXR immersive-ar (điện thoại/headset,
+    // origin bảo mật). Trên desktop -> ẩn nút để không gây hiểu nhầm.
+    const [arSupported, setArSupported] = useState(false);
+    useEffect(() => {
+        let alive = true;
+        navigator.xr
+            ?.isSessionSupported?.("immersive-ar")
+            .then((ok) => alive && setArSupported(!!ok))
+            .catch(() => {});
+        return () => {
+            alive = false;
+        };
+    }, []);
 
     // Chụp ảnh khung hình 3D hiện tại và tải về PNG.
     const snapshot = useCallback(() => {
@@ -497,15 +536,38 @@ function View3DPage({ character, onBack }) {
                 <CharacterViewer
                     character={character}
                     captureRef={captureRef}
+                    controlsRef={controlsRef}
+                    autoRotate={autoRotate}
                     style={{ width: "100%", height: "100%" }}
                 />
-                <button
-                    className="v3d-snap"
-                    onClick={snapshot}
-                    title="Chụp ảnh mô hình"
-                >
-                    📷 Chụp ảnh
-                </button>
+
+                {/* Thanh công cụ nổi: xoay tự động · đặt lại góc · chụp ảnh */}
+                <div className="v3d-tools">
+                    <button
+                        className="v3d-tool"
+                        onClick={() => setAutoRotate((r) => !r)}
+                        title={autoRotate ? "Tạm dừng xoay" : "Xoay tự động"}
+                        aria-pressed={autoRotate}
+                    >
+                        {autoRotate ? "⏸" : "▶"}
+                    </button>
+                    <button
+                        className="v3d-tool"
+                        onClick={() => controlsRef.current?.reset()}
+                        title="Đặt lại góc nhìn"
+                    >
+                        ⟲
+                    </button>
+                    <button
+                        className="v3d-tool"
+                        onClick={snapshot}
+                        title="Chụp ảnh mô hình"
+                    >
+                        📷
+                    </button>
+                </div>
+
+                <p className="v3d-hint">Kéo để xoay · cuộn để phóng to</p>
             </div>
 
             <aside className="v3d-panel">
@@ -514,10 +576,25 @@ function View3DPage({ character, onBack }) {
 
                 <StatList stats={character.stats} variant="v3d" />
 
+                <div className="v3d-bio">
+                    <span className="v3d-bio-label">Tiểu sử</span>
+                    <p>{character.bio}</p>
+                </div>
+
                 <div className="v3d-note">
                     <span className="note-icon">💬</span>
                     <p>{character.note}</p>
                 </div>
+
+                {arSupported && (
+                    <button
+                        className="ar-btn"
+                        onClick={() => store.enterAR()}
+                        title="Đặt mô hình vào không gian thật"
+                    >
+                        📱 Xem trong không gian (AR)
+                    </button>
+                )}
             </aside>
         </div>
     );

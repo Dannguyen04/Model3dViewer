@@ -295,7 +295,11 @@ body,
     padding: 15px 40px;
     border: none;
     border-radius: 10px;
-    background: var(--accent);
+    background: linear-gradient(
+        160deg,
+        var(--accent) 0%,
+        var(--accent-dark) 100%
+    );
     color: #fff;
     font-family: var(--font-display);
     font-size: 20px;
@@ -332,7 +336,7 @@ body,
 }
 
 .view3d-btn:hover {
-    background: var(--accent-light);
+    filter: brightness(1.12);
     box-shadow: 0 8px 30px
         color-mix(in srgb, var(--accent-light) 55%, transparent);
     transform: translateY(-2px);
@@ -842,6 +846,29 @@ body,
     color: #fff;
 }
 
+/* Tiểu sử trong panel trang 3D */
+.v3d-bio {
+    padding: 12px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.v3d-bio-label {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    margin-bottom: 6px;
+}
+
+.v3d-bio p {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: #d6d6d6;
+}
+
 .v3d-note {
     display: flex;
     gap: 10px;
@@ -859,7 +886,11 @@ body,
     padding: 14px 18px;
     border: none;
     border-radius: 10px;
-    background: var(--accent);
+    background: linear-gradient(
+        160deg,
+        var(--accent) 0%,
+        var(--accent-dark) 100%
+    );
     color: #fff;
     font-family: var(--font-display);
     font-style: italic;
@@ -873,7 +904,7 @@ body,
         background 0.15s ease;
 }
 .ar-btn:hover {
-    background: var(--accent-light);
+    filter: brightness(1.12);
     transform: translateY(-2px);
 }
 .ar-btn:active {
@@ -1035,21 +1066,29 @@ body,
     }
 }
 
-/* Nút chụp ảnh trong trang xem 3D */
-.v3d-snap {
+/* Thanh công cụ nổi trong trang xem 3D (xoay · reset · chụp ảnh) */
+.v3d-tools {
     position: absolute;
     right: 16px;
     bottom: 16px;
     z-index: 5;
-    padding: 9px 16px;
-    border-radius: 999px;
+    display: flex;
+    gap: 8px;
+}
+
+.v3d-tool {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
     border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
     background: rgba(10, 10, 10, 0.72);
     backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     color: #fff;
-    font-family: var(--font-body);
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 17px;
+    line-height: 1;
     cursor: pointer;
     transition:
         background 0.15s ease,
@@ -1057,13 +1096,19 @@ body,
         transform 0.1s ease;
 }
 
-.v3d-snap:hover {
+.v3d-tool:hover {
     border-color: var(--accent);
-    background: color-mix(in srgb, var(--accent) 30%, rgba(10, 10, 10, 0.8));
+    background: color-mix(in srgb, var(--accent) 32%, rgba(10, 10, 10, 0.85));
+    transform: translateY(-2px);
 }
 
-.v3d-snap:active {
-    transform: scale(0.96);
+.v3d-tool:active {
+    transform: scale(0.94);
+}
+
+.v3d-tool[aria-pressed="false"] {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 40%, rgba(10, 10, 10, 0.85));
 }
 
 /* =========================================================================
