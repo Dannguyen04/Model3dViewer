@@ -247,7 +247,7 @@ function CharacterViewer({
                                     khấu (mọi model + mọi tỉ lệ màn hình), không
                                     còn bé xíu/trôi lên đỉnh. Center bottom giữ
                                     chân model chạm đất y=0 cho bóng đổ đúng. */}
-                                <Bounds fit clip margin={1.8}>
+                                <Bounds fit clip margin={1.4}>
                                     <Center bottom>
                                         <ProductModel
                                             url={character.model}

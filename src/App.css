@@ -358,102 +358,8 @@ body,
     letter-spacing: 0.5px;
 }
 
-/* Trên màn hình hẹp: xếp dọc, cho phép cuộn */
-@media (max-width: 820px) {
-    /* --- Trang hồ sơ --- */
-    .info-page {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto auto;
-        align-items: start;
-        height: 100%;
-        overflow-y: auto;
-        gap: 10px;
-        padding: 68px 6vw 40px;
-    }
-    .info-image {
-        max-height: 38vh;
-    }
-    .info-watermark {
-        font-size: 72px;
-    }
-    .info-panel {
-        max-width: 100%;
-    }
-    .char-name {
-        font-size: clamp(32px, 12vw, 52px);
-    }
-    .info-actions {
-        width: 100%;
-    }
-    .view3d-btn,
-    .view3d-soon {
-        width: 100%;
-        text-align: center;
-    }
-
-    /* --- Trang 3D trên mobile: model chiếm TRỌN màn hình, KHÔNG panel thông tin
-       (thông tin đã có ở trang Hồ sơ) -> không bị đẩy xuống khi 3D tải xong. --- */
-    .view3d-page {
-        flex-direction: column;
-        overflow: hidden;
-    }
-    .v3d-stage {
-        flex: 1;
-        height: auto; /* chiếm toàn bộ chiều cao */
-    }
-    /* Panel co lại còn 0 nhưng vẫn tồn tại để chứa nút AR (fixed). */
-    .v3d-panel {
-        width: 100%;
-        height: 0;
-        min-height: 0;
-        padding: 0;
-        overflow: visible;
-        background: none;
-        border: none;
-        animation: none; /* bỏ transform -> nút AR fixed bám đúng viewport */
-    }
-    /* Ẩn nội dung chữ trên mobile — chỉ giữ model + watermark + chip deck. */
-    .v3d-name,
-    .v3d-tag,
-    .v3d-stats,
-    .v3d-bio,
-    .v3d-note {
-        display: none;
-    }
-
-    /* Nút AR ghim đáy viewport trên mobile — luôn thấy. */
-    .ar-btn {
-        position: fixed;
-        left: 16px;
-        right: 16px;
-        bottom: 16px;
-        z-index: 30;
-        margin-top: 0;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
-    }
-    .v3d-watermark {
-        top: 58px;
-        bottom: auto;
-        font-size: 64px;
-    }
-    .v3d-hint {
-        display: none;
-    }
-    /* Đẩy thanh ⏸/📷 lên trên nút AR ghim đáy để không chồng nhau. */
-    .v3d-tools {
-        bottom: 80px;
-    }
-    .v3d-deck {
-        top: 16px;
-        right: 16px;
-    }
-    .back-btn {
-        top: 14px;
-        left: 14px;
-        padding: 8px 14px;
-        font-size: 14px;
-    }
-}
+/* Ghi chú: các override cho màn hình hẹp nằm ở CUỐI file (sau mọi định nghĩa gốc)
+   để thắng đúng theo thứ tự nguồn — xem @media (max-width: 820px) ở cuối. */
 
 /* =========================================================================
    TRANG SHOWCASE (trang chính)
@@ -1284,5 +1190,107 @@ body,
     }
     .info-panel > * {
         opacity: 1;
+    }
+}
+
+/* =========================================================================
+   MÀN HÌNH HẸP (mobile) — đặt ở CUỐI file để mọi override thắng theo thứ tự nguồn.
+   ========================================================================= */
+@media (max-width: 820px) {
+    /* --- Trang hồ sơ --- */
+    .info-page {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+        align-items: start;
+        height: 100%;
+        overflow-y: auto;
+        gap: 10px;
+        padding: 68px 6vw 40px;
+    }
+    .info-image {
+        max-height: 38vh;
+    }
+    .info-watermark {
+        font-size: 72px;
+    }
+    .info-panel {
+        max-width: 100%;
+    }
+    .char-name {
+        font-size: clamp(32px, 12vw, 52px);
+    }
+    .info-actions {
+        width: 100%;
+    }
+    .view3d-btn,
+    .view3d-soon {
+        width: 100%;
+        text-align: center;
+    }
+
+    /* --- Trang 3D trên mobile: model chiếm TRỌN màn hình, KHÔNG panel thông tin
+       (thông tin đã có ở trang Hồ sơ) -> không bị đẩy xuống khi 3D tải xong. --- */
+    .view3d-page {
+        flex-direction: column;
+        overflow: hidden;
+    }
+    .v3d-stage {
+        /* Chiều cao XÁC ĐỊNH (không dùng flex-auto) để <Canvas height:100%>
+           phân giải được — nếu không canvas co về 0 và model/nút biến mất.
+           Panel đã ẩn (height:0) nên stage lấy trọn 100%. */
+        flex: none;
+        height: 100%;
+    }
+    /* Panel co lại còn 0 nhưng vẫn tồn tại để chứa nút AR (fixed). */
+    .v3d-panel {
+        width: 100%;
+        height: 0;
+        min-height: 0;
+        padding: 0;
+        overflow: visible;
+        background: none;
+        border: none;
+        animation: none; /* bỏ transform -> nút AR fixed bám đúng viewport */
+    }
+    /* Ẩn nội dung chữ trên mobile — chỉ giữ model + watermark + chip deck. */
+    .v3d-name,
+    .v3d-tag,
+    .v3d-stats,
+    .v3d-bio,
+    .v3d-note {
+        display: none;
+    }
+
+    /* Nút AR ghim đáy viewport trên mobile — luôn thấy. */
+    .ar-btn {
+        position: fixed;
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
+        z-index: 30;
+        margin-top: 0;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+    }
+    .v3d-watermark {
+        top: 58px;
+        bottom: auto;
+        font-size: 64px;
+    }
+    .v3d-hint {
+        display: none;
+    }
+    /* Đẩy thanh ⏸/📷 lên trên nút AR ghim đáy để không chồng nhau. */
+    .v3d-tools {
+        bottom: 80px;
+    }
+    .v3d-deck {
+        top: 16px;
+        right: 16px;
+    }
+    .back-btn {
+        top: 14px;
+        left: 14px;
+        padding: 8px 14px;
+        font-size: 14px;
     }
 }
