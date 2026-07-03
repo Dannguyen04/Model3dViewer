@@ -1,0 +1,9 @@
+node_modules
+dist
+.dist
+
+# Ảnh gốc PNG (app chỉ dùng bản .webp) — không cần deploy
+public/character_image/*.png
+
+# Model 3D lớn chưa gán cho nhân vật nào (chỉ dùng 8.glb & 15.glb)
+public/Hitem3d-*.glb

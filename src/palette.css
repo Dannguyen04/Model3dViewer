@@ -1,0 +1,59 @@
+/* =========================================================================
+   BẢNG MÀU THƯƠNG HIỆU — trích từ ảnh "COLOR PALLETE".
+   Mỗi deck có: màu chính (main) + sáng (light) + tối (dark).
+   * Giá trị lấy áng theo mắt; thay bằng hex brand gốc nếu có để chuẩn 100%.
+   ========================================================================= */
+:root {
+    /* --- Thương hiệu chung --- */
+    --brand-orange: #e8461e; /* tiêu đề COLOR PALLETE */
+    --bg-black: #0a0a0a; /* nền tối chủ đạo */
+    --bg-panel: rgba(255, 255, 255, 0.03);
+
+    /* --- BOX (bộ nhận diện hộp game): đen / xanh lá / tím --- */
+    --box-dark: #1a1a1a;
+    --box-green: #7cc242;
+    --box-purple: #a020d0;
+
+    /* --- ADVENTURE DECK: đỏ --- */
+    --adventure: #b01818;
+    --adventure-light: #e8433a;
+    --adventure-dark: #6e0f0f;
+
+    /* --- HERO DECK: xanh dương --- */
+    --hero: #1e5fa8;
+    --hero-light: #4a90d9;
+    --hero-dark: #123a66;
+
+    /* --- STRATEGY DECK: xanh cyan --- */
+    --strategy: #35c4e8;
+    --strategy-light: #a8e8f5;
+    --strategy-dark: #1e7c93;
+
+    /* --- EQUIPMENT DECK: cam / vàng gold --- */
+    --equipment: #d98b10;
+    --equipment-gold: #e6a817;
+    --equipment-dark: #8a5606;
+
+    /* --- GROW DECK: hồng sen / xanh ngọc / xanh lá --- */
+    --grow-magenta: #c21e6b;
+    --grow-teal: #1fa36b;
+    --grow-green: #6fbf3b;
+
+    /* --- EVENT DECK: tím --- */
+    --event: #9b1fc4;
+    --event-light: #c64de8;
+    --event-dark: #5e1178;
+
+    /* =====================================================================
+       ACCENT ĐANG DÙNG cho trang hồ sơ nhân vật.
+       Đổi 3 dòng dưới để chuyển theme (vd sang Hero: hero / hero-light / hero-dark).
+       ===================================================================== */
+    --accent: var(--grow-teal);
+    --accent-light: var(--grow-green);
+    --accent-dark: #0f5c3c;
+    --accent-contrast: #04140d; /* màu chữ trên nền accent */
+
+    /* --- Typography (tham khảo style quychien.com) --- */
+    --font-display: "Anton", "Arial Narrow", sans-serif; /* tiêu đề logo game */
+    --font-body: "Inter", system-ui, -apple-system, sans-serif;
+}
