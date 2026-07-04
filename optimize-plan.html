@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plan: Tối ưu Image & Build/Bundle</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: #0f0f0f; color: #e0e0e0; line-height: 1.7; padding: 2rem; max-width: 860px; margin: 0 auto; }
+        h1 { font-size: 2rem; color: #fff; margin-bottom: 0.4rem; }
+        .subtitle { color: #888; margin-bottom: 2.5rem; font-size: 0.9rem; }
+        h2 { font-size: 1.15rem; color: #a78bfa; margin: 2.5rem 0 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+        h2 .num { background: #a78bfa22; border: 1px solid #a78bfa55; color: #a78bfa; border-radius: 50%; width: 1.6rem; height: 1.6rem; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; flex-shrink: 0; }
+        .card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 0.75rem; }
+        .card h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; color: #888; margin-bottom: 0.75rem; }
+        code, pre { font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.88rem; }
+        pre { background: #0a0a0a; border: 1px solid #222; border-radius: 8px; padding: 1rem 1.25rem; overflow-x: auto; color: #c9d1d9; line-height: 1.6; margin: 0.75rem 0 0.25rem; }
+        .tag { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 4px; font-size: 0.78rem; font-weight: 600; margin-left: auto; white-space: nowrap; }
+        .tag.high { background: #16a34a22; border: 1px solid #16a34a55; color: #4ade80; }
+        .tag.med  { background: #ca8a0422; border: 1px solid #ca8a0455; color: #fbbf24; }
+        .tag.low  { background: #3b82f622; border: 1px solid #3b82f655; color: #93c5fd; }
+        .row { display: flex; align-items: baseline; gap: 0.75rem; flex-wrap: wrap; }
+        .file { font-size: 0.82rem; color: #6ee7b7; background: #064e3b33; border: 1px solid #06b86155; padding: 0.1rem 0.55rem; border-radius: 4px; font-family: monospace; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin-top: 0.5rem; }
+        th { text-align: left; color: #888; font-weight: 500; padding: 0.4rem 0.75rem; border-bottom: 1px solid #2a2a2a; }
+        td { padding: 0.45rem 0.75rem; border-bottom: 1px solid #1e1e1e; }
+        td:first-child { color: #c084fc; font-weight: 500; }
+        td:nth-child(2) { color: #f87171; }
+        td:nth-child(3) { color: #4ade80; }
+        ul { padding-left: 1.25rem; color: #ccc; }
+        ul li { margin-bottom: 0.35rem; }
+        .why { background: #1e1e2e; border-left: 3px solid #a78bfa; border-radius: 0 8px 8px 0; padding: 0.85rem 1rem; font-size: 0.88rem; color: #c4b5fd; margin: 0.75rem 0 0; }
+        .why strong { color: #a78bfa; display: block; margin-bottom: 0.2rem; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; }
+        .problem { background: #2d1515; border-left: 3px solid #f87171; border-radius: 0 8px 8px 0; padding: 0.85rem 1rem; font-size: 0.88rem; color: #fca5a5; margin: 0.75rem 0 0; }
+        .problem strong { color: #f87171; display: block; margin-bottom: 0.2rem; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; }
+        .flow { display: flex; flex-direction: column; gap: 0.25rem; margin: 0.5rem 0; font-family: monospace; font-size: 0.85rem; color: #94a3b8; }
+        .flow .step { padding: 0.3rem 0.75rem; background: #111; border-radius: 6px; }
+        .flow .step.slow { border-left: 3px solid #f87171; color: #fca5a5; }
+        .flow .step.fast { border-left: 3px solid #4ade80; color: #86efac; }
+        .flow .arrow { text-align: center; color: #555; font-size: 0.8rem; }
+        hr { border: none; border-top: 1px solid #222; margin: 2.5rem 0; }
+        .verify { background: #14532d22; border: 1px solid #16a34a33; border-radius: 12px; padding: 1.25rem 1.5rem; }
+        .verify ol { padding-left: 1.25rem; color: #ccc; }
+        .verify ol li { margin-bottom: 0.5rem; }
+        p + p { margin-top: 0.5rem; }
+        .status-bar { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem; }
+        .status-item { display: flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.9rem; border-radius: 8px; font-size: 0.85rem; }
+        .status-item.done { background: #14532d33; border: 1px solid #16a34a55; color: #4ade80; }
+        .status-item.todo { background: #1e1e2e; border: 1px solid #3b82f655; color: #93c5fd; }
+        .status-item .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+        .status-item.done .dot { background: #4ade80; }
+        .status-item.todo .dot { background: #3b82f6; }
+        .done-badge { display: inline-flex; align-items: center; gap: 0.3rem; background: #14532d33; border: 1px solid #16a34a55; color: #4ade80; font-size: 0.75rem; padding: 0.1rem 0.5rem; border-radius: 4px; margin-left: 0.5rem; font-weight: 600; }
+        .diff { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.75rem; font-size: 0.83rem; }
+        .diff-col { background: #0a0a0a; border: 1px solid #222; border-radius: 6px; padding: 0.6rem 0.85rem; }
+        .diff-col.before { border-left: 3px solid #f87171; }
+        .diff-col.after  { border-left: 3px solid #4ade80; }
+        .diff-col .label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; color: #666; margin-bottom: 0.3rem; }
+        .diff-col.before .label { color: #f87171; }
+        .diff-col.after  .label { color: #4ade80; }
+        .diff-col ul { padding-left: 1rem; color: #ccc; }
+        .diff-col ul li { margin-bottom: 0.2rem; }
+    </style>
+</head>
+<body>
+
+<h1>Plan: Tối ưu Image &amp; Build/Bundle</h1>
+<p class="subtitle">React 19 + Vite 7 + Three.js/R3F — Model3dViewer</p>
+
+<!-- STATUS BAR -->
+<div class="status-bar">
+    <div class="status-item done"><span class="dot"></span> 1. Code splitting</div>
+    <div class="status-item done"><span class="dot"></span> 2. Nén ảnh Sharp</div>
+    <div class="status-item done"><span class="dot"></span> 3. Prebuild script</div>
+    <div class="status-item done"><span class="dot"></span> 4. Preload ảnh đầu</div>
+    <div class="status-item done"><span class="dot"></span> 5. fetchPriority</div>
+    <div class="status-item done"><span class="dot"></span> 6. XR emulator chunk — đã điều tra, không cần làm</div>
+</div>
+
+<div class="card">
+    <h3>Tình trạng hiện tại</h3>
+    <p><code>vite.config.js</code> gần như trống — không code splitting, không build target. Toàn bộ thư viện (Three.js ~600KB, React, R3F...) bị gộp vào <strong>1 file JS duy nhất</strong> khi build. Ảnh nằm trong <code>/public/</code> nên Vite không xử lý gì. <code>sharp</code> đã có sẵn trong devDependencies nhưng chưa được dùng lần nào.</p>
+</div>
+
+<!-- ================================================================ -->
+<!-- ITEM 1 -->
+<!-- ================================================================ -->
+<h2><span class="num">1</span> <span class="row">Code splitting (tách bundle JS) <span class="tag high">Impact cao</span><span class="done-badge">✓ DONE</span></span></h2>
+
+<div class="card">
+    <div class="row" style="margin-bottom:0.75rem"><span class="file">vite.config.js</span></div>
+
+    <div class="problem">
+        <strong>Vấn đề</strong>
+        Khi build, Vite gom <em>tất cả</em> vào 1 file JS (~2MB+). Mỗi lần user mở trang phải tải hết file đó. Tệ hơn: nếu bạn sửa 1 dòng trong <code>App.jsx</code>, file đó thay đổi → browser phải <strong>tải lại toàn bộ 2MB</strong>, kể cả Three.js không hề thay đổi.
+    </div>
+
+    <div class="why" style="margin-top:0.5rem">
+        <strong>Cách hoạt động sau khi sửa</strong>
+        Tách ra 4 file riêng: <code>react-vendor.js</code> · <code>three-vendor.js</code> · <code>r3f-vendor.js</code> · <code>index.js</code> (app code). Mỗi file có hash riêng. Khi bạn sửa app, chỉ <code>index.js</code> thay đổi hash — browser tải lại file nhỏ đó thôi, 3 file vendor được cache sẵn từ lần trước.
+    </div>
+
+    <div class="diff">
+        <div class="diff-col before">
+            <div class="label">Trước</div>
+            <ul>
+                <li>1 file JS duy nhất ~2MB+</li>
+                <li>Sửa 1 dòng app → tải lại toàn bộ</li>
+                <li>Không có <code>build</code> config</li>
+            </ul>
+        </div>
+        <div class="diff-col after">
+            <div class="label">Sau — build thực tế</div>
+            <ul>
+                <li><code>three-vendor.js</code> — 734 KB</li>
+                <li><code>r3f-vendor.js</code> — 665 KB</li>
+                <li><code>index.js</code> (app code) — 14.9 KB</li>
+                <li>Sửa app chỉ bust <code>index.js</code></li>
+            </ul>
+        </div>
+    </div>
+
+    <pre>build: {
+  target: 'esnext',           // output nhỏ hơn, bỏ polyfill không cần cho browser hiện đại
+  chunkSizeWarningLimit: 2000, // tắt cảnh báo vô nghĩa với chunk Three.js to
+  rollupOptions: {
+    output: {
+      manualChunks: {
+        'react-vendor': ['react', 'react-dom'],
+        'three-vendor': ['three'],
+        'r3f-vendor': ['@react-three/fiber', '@react-three/drei', '@react-three/xr'],
+      },
+    },
+  },
+},</pre>
+</div>
+
+<!-- ================================================================ -->
+<!-- ITEM 2 -->
+<!-- ================================================================ -->
+<h2><span class="num">2</span> <span class="row">Script nén ảnh bằng Sharp <span class="tag high">Impact cao</span><span class="done-badge">✓ DONE</span></span></h2>
+
+<div class="card">
+    <div class="row" style="margin-bottom:0.75rem">
+        <span class="file">scripts/optimize-images.js</span>
+        <span style="color:#888;font-size:0.82rem">(file mới)</span>
+    </div>
+
+    <div class="problem">
+        <strong>Vấn đề</strong>
+        Ảnh nằm trong <code>/public/</code>. Vite <strong>không xử lý gì</strong> với file trong thư mục này — copy nguyên si vào <code>dist/</code>. Dù ảnh nặng 200KB hay 20KB, Vite cũng mặc kệ.
+    </div>
+
+    <div class="why" style="margin-top:0.5rem">
+        <strong>Sharp là gì?</strong>
+        Là thư viện nén/resize ảnh chạy bằng Node.js. Đã có sẵn trong <code>devDependencies</code> của dự án (ai đó cài rồi nhưng chưa dùng). Script sẽ đọc từng ảnh WebP, nén chặt hơn với quality 82, resize nếu ảnh quá rộng → ảnh nhỏ hơn 20–30% mà mắt thường khó phân biệt sự khác biệt.
+    </div>
+
+    <ul style="margin: 0.75rem 0 0.75rem">
+        <li>Đọc tất cả <code>*.webp</code> từ <code>public/character_image/</code></li>
+        <li>Resize về max 900px nếu ảnh rộng hơn (đủ cho card + info page)</li>
+        <li>Re-encode WebP với <code>quality: 82, effort: 6</code></li>
+        <li>In ra size trước/sau để kiểm tra kết quả</li>
+    </ul>
+
+    <div class="diff">
+        <div class="diff-col before">
+            <div class="label">Trước (20 ảnh)</div>
+            <ul>
+                <li>Tổng: 1,917 KB</li>
+                <li>Nhỏ nhất: 66 KB</li>
+                <li>Lớn nhất: 150 KB</li>
+            </ul>
+        </div>
+        <div class="diff-col after">
+            <div class="label">Sau — chạy thực tế</div>
+            <ul>
+                <li>Tổng: 1,218 KB <strong>(−35.7%)</strong></li>
+                <li>Nhỏ nhất: 43 KB</li>
+                <li>Lớn nhất: 101 KB</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- ================================================================ -->
+<!-- ITEM 3 -->
+<!-- ================================================================ -->
+<h2><span class="num">3</span> <span class="row">Tự động hóa script nén ảnh (prebuild) <span class="tag med">Medium</span><span class="done-badge">✓ DONE</span></span></h2>
+
+<div class="card">
+    <div class="row" style="margin-bottom:0.75rem"><span class="file">package.json</span></div>
+
+    <div class="why">
+        <strong>Cơ chế npm lifecycle</strong>
+        npm có quy tắc: nếu bạn định nghĩa key <code>"prebuild"</code>, npm <strong>tự động chạy nó trước</strong> khi chạy <code>"build"</code> — không cần nhớ chạy thủ công. Tương tự <code>"pretest"</code> chạy trước <code>"test"</code>.
+    </div>
+
+    <pre>"prebuild": "node scripts/optimize-images.js"</pre>
+
+    <p style="color:#888;font-size:0.85rem;margin-top:0.5rem">
+        Luồng: <code>npm run build</code> → npm tự chạy optimize-images → Vite build. Không ảnh hưởng <code>npm run dev</code>.
+    </p>
+</div>
+
+<!-- ================================================================ -->
+<!-- ITEM 4 -->
+<!-- ================================================================ -->
+<h2><span class="num">4</span> <span class="row">Preload ảnh đầu tiên trong index.html <span class="tag med">Medium</span><span class="done-badge">✓ DONE</span></span></h2>
+
+<div class="card">
+    <div class="row" style="margin-bottom:0.75rem"><span class="file">index.html</span></div>
+
+    <div class="problem">
+        <strong>Vấn đề</strong>
+        Trình tự tải trang hiện tại: browser tải HTML → tải JS → JS chạy → React render → browser thấy <code>&lt;img src="..."&gt;</code> → <em>mới bắt đầu tải ảnh</em>. Ảnh đầu tiên phải đợi qua 4 bước trung gian.
+    </div>
+
+    <div class="why" style="margin-top:0.5rem">
+        <strong>Preload là gì?</strong>
+        Thêm 1 dòng vào <code>index.html</code> báo browser ngay khi đọc HTML: <em>"Tao biết mày sẽ cần cái ảnh này, tải ngay đi"</em>. Browser tải ảnh song song ngay từ đầu, không cần đợi JS chạy xong.
+    </div>
+
+    <pre>&lt;link rel="preload" as="image"
+      href="/character_image/Untitled_Artwork%201.webp"
+      type="image/webp" /&gt;</pre>
+</div>
+
+<!-- ================================================================ -->
+<!-- ITEM 5 -->
+<!-- ================================================================ -->
+<h2><span class="num">5</span> <span class="row">fetchPriority cho card đầu tiên <span class="tag low">Low</span><span class="done-badge">✓ DONE</span></span></h2>
+
+<div class="card">
+    <div class="row" style="margin-bottom:0.75rem">
+        <span class="file">src/App.jsx</span>
+        <span style="color:#888;font-size:0.82rem">CharacterCard ~line 333</span>
+    </div>
+
+    <div class="problem">
+        <strong>Vấn đề</strong>
+        Tất cả 20 ảnh đều có <code>loading="lazy"</code> và browser xếp chúng cùng hàng chờ, ưu tiên như nhau. Nhưng ảnh đầu tiên thì người dùng nhìn thấy ngay khi mở trang — cần hiện càng sớm càng tốt.
+    </div>
+
+    <div class="why" style="margin-top:0.5rem">
+        <strong>fetchPriority là gì?</strong>
+        Là gợi ý cho browser: <em>"Ảnh này quan trọng hơn, xử lý trước"</em>. Browser dành băng thông ưu tiên cho nó thay vì chia đều cho cả 20 ảnh. Chỉ áp dụng cho card index 0 — các card còn lại vẫn lazy như cũ.
+    </div>
+
+    <pre>&lt;img
+    src={character.image}
+    alt={character.name}
+    loading="lazy"
+    fetchPriority={index === 0 ? "high" : "auto"}
+    onLoad={() =&gt; setLoaded(true)}
+/&gt;</pre>
+</div>
+
+<hr />
+
+<!-- ================================================================ -->
+<!-- ACTUAL RESULTS -->
+<!-- ================================================================ -->
+<h2><span class="num">✓</span> Kết quả thực tế sau khi implement</h2>
+<div class="card">
+    <table>
+        <thead>
+            <tr><th>Metric</th><th>Trước</th><th>Sau</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>Ảnh WebP (tổng)</td><td>1,917 KB</td><td>1,218 KB  (tiết kiệm 35.7%)</td></tr>
+            <tr><td>App code chunk</td><td>–</td><td>index.js 14.9 KB (tiny!)</td></tr>
+            <tr><td>Three.js chunk</td><td>gộp chung</td><td>three-vendor.js 734 KB — cache riêng</td></tr>
+            <tr><td>R3F chunk</td><td>gộp chung</td><td>r3f-vendor.js 665 KB — cache riêng</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ================================================================ -->
+<!-- FINDING -->
+<!-- ================================================================ -->
+<h2><span class="num">6</span> <span class="row">XR Emulator chunks — điều tra kết quả <span class="done-badge">✓ Không cần làm</span></span></h2>
+<div class="card">
+    <div class="problem">
+        <strong>Lo ngại ban đầu</strong>
+        Build sinh ra các chunk lớn từ <code>@react-three/xr</code>: <code>emulate.js</code> (1.3 MB), <code>living_room.js</code> (1.5 MB), <code>music_room.js</code> (2 MB), <code>office_large.js</code>, <code>office_small.js</code>, <code>meeting_room.js</code>. Nghi ngờ user phải tải về toàn bộ khi mở trang.
+    </div>
+
+    <div class="why" style="margin-top:0.5rem">
+        <strong>Kết quả sau điều tra — không phải vấn đề thật</strong>
+        Kiểm tra <code>dist/index.html</code>: chỉ có 3 file được load lúc khởi động: <code>index.js</code> (14.9 KB), <code>three-vendor.js</code>, <code>r3f-vendor.js</code>. Các chunk XR không xuất hiện ở đây.
+        <br /><br />
+        Kiểm tra bên trong <code>r3f-vendor.js</code>: <code>emulate.js</code> được import bằng <code>dynamic import()</code> và được guard bởi điều kiện:
+        <br /><br />
+        <code>u = o?.emulate ?? "metaQuest3"</code><br />
+        <code>if (typeof window &lt; "u" &amp;&amp; u != false) { /* load emulator */ }</code>
+        <br /><br />
+        Vì store được tạo với <code>emulate: false</code>, biến <code>u = false</code>, điều kiện <code>false !== false</code> = <code>false</code> → block load emulator bị <strong>skip hoàn toàn</strong>. Các chunk môi trường (living_room, music_room...) cũng lazy và chỉ load khi emulator thực sự khởi động.
+        <br /><br />
+        Kết luận: <strong>browser không bao giờ tải các chunk này</strong>. Chúng chỉ nằm trong <code>dist/</code> nhưng không được request.
+    </div>
+</div>
+
+<hr />
+
+<!-- ================================================================ -->
+<!-- VERIFICATION -->
+<!-- ================================================================ -->
+<h2><span class="num">?</span> Kiểm tra sau khi làm xong</h2>
+<div class="verify">
+    <ol>
+        <li>Chạy <code>npm run build</code> → xem terminal: thấy <code>three-vendor-*.js</code> và <code>r3f-vendor-*.js</code> xuất hiện riêng biệt</li>
+        <li>Xem log bước prebuild → ảnh giảm ~35% là đúng</li>
+        <li>Chạy <code>npm run preview</code> → F12 → tab <strong>Network</strong> → lọc <strong>Img</strong> → ảnh #1 có Priority <strong>High</strong></li>
+        <li>Reload lại trang → các file <code>vendor-*.js</code> trả về <strong>304</strong> (cache hit, không tải lại)</li>
+    </ol>
+</div>
+
+</body>
+</html>

@@ -333,6 +333,7 @@ function CharacterCard({ character, onSelect, index }) {
                         src={character.image}
                         alt={character.name}
                         loading="lazy"
+                        fetchPriority={index === 0 ? "high" : "auto"}
                         onLoad={() => setLoaded(true)}
                     />
                 </div>

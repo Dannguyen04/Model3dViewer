@@ -8,4 +8,17 @@ import basicSsl from '@vitejs/plugin-basic-ssl'
 export default defineConfig({
   plugins: [react(), basicSsl()],
   server: { host: true },
+  build: {
+    target: 'esnext',
+    chunkSizeWarningLimit: 2000,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'three-vendor': ['three'],
+          'r3f-vendor': ['@react-three/fiber', '@react-three/drei', '@react-three/xr'],
+        },
+      },
+    },
+  },
 })
