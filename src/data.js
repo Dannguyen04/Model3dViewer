@@ -40,6 +40,7 @@ const MODELS = {
     "Untitled_Artwork 1.webp": "/1.glb",
     "Untitled_Artwork 2.webp": "/2.glb",
     "Untitled_Artwork 3.webp": "/3.glb",
+    "Untitled_Artwork 4.webp": "/4.glb",
     "Untitled_Artwork 6.webp": "/6.glb",
     "Untitled_Artwork 8.webp": "/8.glb",
     "Untitled_Artwork 10.webp": "/10.glb",
