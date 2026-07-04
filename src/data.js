@@ -37,6 +37,9 @@ const IMAGE_FILES = Array.from(
 
 // Model 3D đã có (gán theo tên file ảnh). Nhân vật không có -> nút 3D tự ẩn.
 const MODELS = {
+    "Untitled_Artwork 1.webp": "/1.glb",
+    "Untitled_Artwork 2.webp": "/2.glb",
+    "Untitled_Artwork 3.webp": "/3.glb",
     "Untitled_Artwork 6.webp": "/6.glb",
     "Untitled_Artwork 8.webp": "/8.glb",
     "Untitled_Artwork 10.webp": "/10.glb",
