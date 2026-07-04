@@ -1,37 +1,28 @@
 // ---------------------------------------------------------------------------
 // DỮ LIỆU NHÂN VẬT
-// Thêm nhân vật = thêm 1 ảnh vào IMAGE_FILES; thêm info thật = thêm entry PROFILES;
-// thêm model 3D = thêm entry MODELS. Nhân vật chưa có model -> nút 3D tự ẩn.
+// Thêm nhân vật = tăng characterCount; thêm info thật = thêm entry profiles;
+// thêm model 3D = thêm entry models. Nhân vật chưa có model -> nút 3D tự ẩn.
 // ---------------------------------------------------------------------------
+
+import raw from "./data.json";
 
 const img = (name) => encodeURI(`/character_image/${name}`);
 
-// Bộ thông số "đang cập nhật" dùng chung cho các nhân vật chưa có info.
 export const TBD = "Đang cập nhật";
 
 const placeholderStats = [
     { icon: "❔", label: "Giới tính", value: TBD },
-    { icon: "❔", label: "Tuổi", value: TBD },
+    { icon: "❔", label: "Tuổi",      value: TBD },
     { icon: "❔", label: "Chiều cao", value: TBD },
-    { icon: "❔", label: "Tóc", value: TBD },
-    { icon: "❔", label: "Mắt", value: TBD },
+    { icon: "❔", label: "Tóc",       value: TBD },
+    { icon: "❔", label: "Mắt",       value: TBD },
 ];
 
-// Bảng màu 6 deck (khớp palette.css).
-export const DECKS = {
-    GROW: { main: "#1fa36b", light: "#6fbf3b", dark: "#0f5c3c" },
-    HERO: { main: "#1e5fa8", light: "#4a90d9", dark: "#123a66" },
-    ADVENTURE: { main: "#b01818", light: "#e8433a", dark: "#6e0f0f" },
-    EVENT: { main: "#9b1fc4", light: "#c64de8", dark: "#5e1178" },
-    STRATEGY: { main: "#35c4e8", light: "#a8e8f5", dark: "#1e7c93" },
-    EQUIPMENT: { main: "#d98b10", light: "#e6a817", dark: "#8a5606" },
-};
+export const DECKS = raw.decks;
 const DECK_ORDER = Object.keys(DECKS);
 
-// Danh sách ảnh nhân vật theo thứ tự số của tên file ảnh 2D (khớp file thật
-// trong public/character_image). Đủ 20 nhân vật (số 1–20).
 const IMAGE_FILES = Array.from(
-    { length: 20 },
+    { length: raw.characterCount },
     (_, i) => `Untitled_Artwork ${i + 1}.webp`,
 );
 
@@ -84,29 +75,27 @@ const PROFILES = {
 
 // Sinh danh sách nhân vật từ ảnh: có PROFILES thì dùng, không thì placeholder.
 export const CHARACTERS = IMAGE_FILES.map((file, i) => {
-    const p = PROFILES[file];
+    const p = raw.profiles[file];
     const deck = p?.deck ?? DECK_ORDER[i % DECK_ORDER.length];
     return {
         id: `c${i}`,
-        name: p?.name ?? `Nhân vật #${String(i + 1).padStart(2, "0")}`,
+        name:    p?.name    ?? `Nhân vật #${String(i + 1).padStart(2, "0")}`,
         tagline: p?.tagline ?? TBD,
-        image: img(file),
-        model: MODELS[file],
-        scale: 0.5,
+        image:   img(file),
+        model:   raw.models[file],
+        scale:   0.5,
         deck,
         accent: DECKS[deck],
         stats: p?.stats ?? placeholderStats,
-        bio: p?.bio ?? "Thông tin nhân vật này đang được cập nhật.",
+        bio:  p?.bio  ?? "Thông tin nhân vật này đang được cập nhật.",
         note: p?.note ?? "Hồ sơ sẽ sớm được công bố.",
     };
 });
 
-// Danh sách model để preload lười khi cần.
 export const MODEL_URLS = CHARACTERS.filter((c) => c.model).map((c) => c.model);
 
-// Đổ bộ màu của nhân vật vào CSS variables (ghi đè --accent* cho subtree).
 export const accentVars = (c) => ({
-    "--accent": c.accent.main,
+    "--accent":       c.accent.main,
     "--accent-light": c.accent.light,
-    "--accent-dark": c.accent.dark,
+    "--accent-dark":  c.accent.dark,
 });

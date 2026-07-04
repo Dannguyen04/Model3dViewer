@@ -1,0 +1,43 @@
+{
+    "characterCount": 20,
+    "decks": {
+        "GROW":      { "main": "#1fa36b", "light": "#6fbf3b", "dark": "#0f5c3c" },
+        "HERO":      { "main": "#1e5fa8", "light": "#4a90d9", "dark": "#123a66" },
+        "ADVENTURE": { "main": "#b01818", "light": "#e8433a", "dark": "#6e0f0f" },
+        "EVENT":     { "main": "#9b1fc4", "light": "#c64de8", "dark": "#5e1178" },
+        "STRATEGY":  { "main": "#35c4e8", "light": "#a8e8f5", "dark": "#1e7c93" },
+        "EQUIPMENT": { "main": "#d98b10", "light": "#e6a817", "dark": "#8a5606" }
+    },
+    "models": {
+        "Untitled_Artwork 1.webp":  "/1.glb",
+        "Untitled_Artwork 2.webp":  "/2.glb",
+        "Untitled_Artwork 3.webp":  "/3.glb",
+        "Untitled_Artwork 4.webp":  "/4.glb",
+        "Untitled_Artwork 6.webp":  "/6.glb",
+        "Untitled_Artwork 8.webp":  "/8.glb",
+        "Untitled_Artwork 10.webp": "/10.glb",
+        "Untitled_Artwork 11.webp": "/11.glb",
+        "Untitled_Artwork 15.webp": "/15.glb",
+        "Untitled_Artwork 16.webp": "/16.glb",
+        "Untitled_Artwork 17.webp": "/17.glb",
+        "Untitled_Artwork 18.webp": "/18.glb",
+        "Untitled_Artwork 19.webp": "/19.glb",
+        "Untitled_Artwork 20.webp": "/20.glb"
+    },
+    "profiles": {
+        "Untitled_Artwork 8.webp": {
+            "name": "Borack Wesker",
+            "tagline": "Người chế thuốc giải độc",
+            "deck": "GROW",
+            "stats": [
+                { "icon": "♂️", "label": "Giới tính", "value": "Nam" },
+                { "icon": "🎂", "label": "Tuổi",      "value": "18" },
+                { "icon": "📏", "label": "Chiều cao", "value": "166 cm" },
+                { "icon": "💇", "label": "Tóc",       "value": "Xám · side part + băng rô trên trán" },
+                { "icon": "👁", "label": "Mắt",       "value": "Xanh lam" }
+            ],
+            "bio": "Dáng người nhỏ nhắn do di chứng của các cuộc thí nghiệm hoá học khi phát triển công nghệ giải độc mới. Tính cách ôn hoà, thân thiện nhưng không thể nói được vì tuyến nước bọt có khả năng giải độc rất lớn nên luôn được thu thập để tạo thuốc giải. Thích nấu ăn.",
+            "note": "Ngôn ngữ ký hiệu là yêu cầu để giao tiếp với cậu ta."
+        }
+    }
+}
