@@ -41,13 +41,22 @@ const MODELS = {
     "Untitled_Artwork 2.webp": "/2.glb",
     "Untitled_Artwork 3.webp": "/3.glb",
     "Untitled_Artwork 4.webp": "/4.glb",
+    "Untitled_Artwork 5.webp": "/5.glb",
     "Untitled_Artwork 6.webp": "/6.glb",
-    "Untitled_Artwork 8.webp": "/8.glb",
+    "Untitled_Artwork 7.webp": "/7.glb",
+    "Untitled_Artwork 8.webp": "/8.glb", //Borack Wesker
+    "Untitled_Artwork 9.webp": "/9.glb",
     "Untitled_Artwork 10.webp": "/10.glb",
     "Untitled_Artwork 11.webp": "/11.glb",
+    "Untitled_Artwork 12.webp": "/12.glb",
+    "Untitled_Artwork 13.webp": "/13.glb",
+    "Untitled_Artwork 14.webp": "/14.glb",
     "Untitled_Artwork 15.webp": "/15.glb",
+    "Untitled_Artwork 16.webp": "/16.glb",
     "Untitled_Artwork 17.webp": "/17.glb",
     "Untitled_Artwork 18.webp": "/18.glb",
+    "Untitled_Artwork 19.webp": "/19.glb",
+    "Untitled_Artwork 20.webp": "/20.glb",
 };
 
 // Hồ sơ riêng cho nhân vật đã có thông tin (key = tên file ảnh).
