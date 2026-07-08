@@ -4,7 +4,7 @@ import React, {
     useState,
     useMemo,
     useEffect,
-    useCallback,
+    // useCallback,
 } from "react";
 import { Canvas } from "@react-three/fiber";
 import {
@@ -37,10 +37,6 @@ import {
     Zap,
     BatteryFull,
     Sparkles,
-    Pause,
-    Play,
-    Camera,
-    RotateCcw,
     ScanLine,
     ChevronDown,
     ArrowLeft,
@@ -776,7 +772,7 @@ function InfoPage({ character, onView3D, onBack }) {
 function View3DPage({ character, onBack }) {
     const captureRef = useRef(null);
     const controlsRef = useRef(null);
-    const [autoRotate, setAutoRotate] = useState(true);
+    const [autoRotate] = useState(true);
     // Trên mobile, panel thông tin là Bottom Sheet: mặc định thu gọn (chỉ hiện
     // tiêu đề) để không che model; chạm handle để trượt lên xem chi tiết.
     const [sheetOpen, setSheetOpen] = useState(false);
@@ -796,17 +792,17 @@ function View3DPage({ character, onBack }) {
     }, []);
 
     // Chụp ảnh khung hình 3D hiện tại và tải về PNG.
-    const snapshot = useCallback(() => {
-        const cap = captureRef.current;
-        if (!cap) return;
-        const { gl, scene, camera } = cap;
-        gl.render(scene, camera); // vẽ lại để buffer chắc chắn còn dữ liệu
-        const url = gl.domElement.toDataURL("image/png");
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `${character.name.replace(/\s+/g, "_")}_3D.png`;
-        a.click();
-    }, [character.name]);
+    // const snapshot = useCallback(() => {
+    //     const cap = captureRef.current;
+    //     if (!cap) return;
+    //     const { gl, scene, camera } = cap;
+    //     gl.render(scene, camera); // vẽ lại để buffer chắc chắn còn dữ liệu
+    //     const url = gl.domElement.toDataURL("image/png");
+    //     const a = document.createElement("a");
+    //     a.href = url;
+    //     a.download = `${character.name.replace(/\s+/g, "_")}_3D.png`;
+    //     a.click();
+    // }, [character.name]);
 
     return (
         <div className="view3d-page" style={accentVars(character)}>
