@@ -26,9 +26,42 @@ import {
     Html,
 } from "@react-three/drei";
 import { Matrix4, Vector3 } from "three";
-import { CHARACTERS, MODEL_URLS, accentVars } from "./data.js";
+import {
+    User,
+    Calendar,
+    Ruler,
+    Tag,
+    Lightbulb,
+    Sword,
+    Shield,
+    Zap,
+    BatteryFull,
+    Sparkles,
+    Pause,
+    Play,
+    Camera,
+    RotateCcw,
+    ScanLine,
+    ChevronDown,
+    ArrowLeft,
+    ArrowRight,
+    X,
+    Search,
+    Box,
+} from "lucide-react";
+import { CHARACTERS, MODEL_URLS, accentVars, TBD } from "./data.js";
 import ModelErrorBoundary from "./ErrorBoundary.jsx";
 import { useHashRoute } from "./useHashRoute.js";
+
+// Ánh xạ nhãn -> icon lucide (đồng bộ, đổi màu theo accent qua currentColor).
+const STAT_ICON = { "Giới tính": User, Tuổi: Calendar, "Chiều cao": Ruler };
+const POWER_ICON = {
+    "Sức mạnh": Sword,
+    "Phòng thủ": Shield,
+    "Tốc độ": Zap,
+    "Năng lượng": BatteryFull,
+    "Kỹ năng": Sparkles,
+};
 
 // v6: store được tạo 1 lần ở module scope, không nằm trong component.
 // emulate:false -> tắt IWER emulator (nút "Enter XR" tự chèn khi chạy localhost).
@@ -153,7 +186,12 @@ function Loader() {
             <div className="loader">
                 <div className="loader-ring-wrap">
                     <svg className="loader-ring" viewBox="0 0 80 80">
-                        <circle className="loader-track" cx="40" cy="40" r={R} />
+                        <circle
+                            className="loader-track"
+                            cx="40"
+                            cy="40"
+                            r={R}
+                        />
                         <circle
                             className="loader-fill"
                             cx="40"
@@ -190,6 +228,7 @@ function CharacterViewer({
     character,
     style,
     captureRef,
+    controlsRef,
     autoRotate = true,
 }) {
     const [placedPosition, setPlacedPosition] = useState(null);
@@ -237,11 +276,18 @@ function CharacterViewer({
                         {!placedPosition && (
                             <>
                                 <OrbitControls
+                                    ref={controlsRef}
                                     makeDefault
                                     autoRotate={autoRotate}
                                     autoRotateSpeed={1.5}
-                                    enableZoom
+                                    enableZoom={false}
                                     enablePan={false}
+                                    // Giới hạn quay lên/xuống tổng 60° (±30° quanh mặt ngang)
+                                    minPolarAngle={Math.PI / 2 - Math.PI / 6}
+                                    maxPolarAngle={Math.PI / 2 + Math.PI / 6}
+                                    // Giới hạn quay trái/phải tổng 60° (±30° quanh mặt trước)
+                                    minAzimuthAngle={-Math.PI / 6}
+                                    maxAzimuthAngle={Math.PI / 6}
                                 />
                                 {/* Bounds tự canh khung: model luôn lấp đầy sân
                                     khấu (mọi model + mọi tỉ lệ màn hình), không
@@ -326,7 +372,12 @@ function CharacterCard({ character, onSelect, index }) {
             <div className="tcard-inner" ref={innerRef}>
                 <span className="tcard-glare" />
                 <span className="tcard-deck">{character.deck}</span>
-                {character.model && <span className="tcard-badge">3D</span>}
+                {character.model && (
+                    <span className="tcard-badge">
+                        <Box size={11} strokeWidth={2.5} />
+                        3D
+                    </span>
+                )}
 
                 <div className={`tcard-art${loaded ? " is-loaded" : ""}`}>
                     <img
@@ -341,6 +392,12 @@ function CharacterCard({ character, onSelect, index }) {
                 <div className="tcard-info">
                     <h2 className="tcard-name">{character.name}</h2>
                     <p className="tcard-tag">{character.tagline}</p>
+                    {character.charClass && character.charClass !== TBD && (
+                        <span className="tcard-class">
+                            <Tag size={11} strokeWidth={2} />
+                            {character.charClass}
+                        </span>
+                    )}
                 </div>
 
                 <span className="tcard-shine" />
@@ -387,8 +444,14 @@ function ShowcasePage({ characters, onSelect }) {
     return (
         <div className="showcase">
             <header className="showcase-head">
-                <h1 className="showcase-title">Bộ Sưu Tập Nhân Vật</h1>
-                <p className="showcase-sub">CHARACTER SHOWCASE</p>
+                <div className="showcase-brand">
+                    <p className="showcase-sub">CHARACTER SHOWCASE</p>
+                    <h1 className="showcase-title">Bộ Sưu Tập Nhân Vật</h1>
+                </div>
+                <span className="showcase-count">
+                    {filtered.length}
+                    <em>/{characters.length}</em> nhân vật
+                </span>
             </header>
 
             <div className="showcase-controls">
@@ -410,7 +473,7 @@ function ShowcasePage({ characters, onSelect }) {
                 </div>
 
                 <div className="search-box">
-                    {/* <span className="search-ico">🔍</span> */}
+                    <Search className="search-ico" size={16} strokeWidth={2} />
                     <input
                         ref={searchRef}
                         type="search"
@@ -449,34 +512,169 @@ function StatList({ stats, variant = "info" }) {
     if (variant === "v3d") {
         return (
             <div className="v3d-stats">
-                {stats.map((s) => (
-                    <div className="v3d-stat" key={s.label}>
-                        <span className="v3d-stat-ico">{s.icon}</span>
-                        <span className="v3d-stat-label">{s.label}</span>
-                        <span className="v3d-stat-val">{s.value}</span>
-                    </div>
-                ))}
+                {stats.map((s) => {
+                    const Ico = STAT_ICON[s.label] || Tag;
+                    return (
+                        <div className="v3d-stat" key={s.label}>
+                            <span className="v3d-stat-ico">
+                                <Ico size={16} strokeWidth={2} />
+                            </span>
+                            <span className="v3d-stat-label">{s.label}</span>
+                            <span className="v3d-stat-val">{s.value}</span>
+                        </div>
+                    );
+                })}
             </div>
         );
     }
     return (
         <div className="stat-list">
-            {stats.map((s) => (
-                <div className="stat-row" key={s.label}>
-                    <span className="stat-icon">{s.icon}</span>
-                    <span className="stat-label">{s.label}</span>
-                    <span className="stat-value">{s.value}</span>
-                </div>
-            ))}
+            {stats.map((s) => {
+                const Ico = STAT_ICON[s.label] || Tag;
+                return (
+                    <div className="stat-row" key={s.label}>
+                        <span className="stat-icon">
+                            <Ico size={18} strokeWidth={2} />
+                        </span>
+                        <span className="stat-label">{s.label}</span>
+                        <span className="stat-value">{s.value}</span>
+                    </div>
+                );
+            })}
         </div>
     );
 }
 
-function NoteCallout({ children }) {
+// 5 chỉ số chiến đấu dạng thanh bar (thang 0–100).
+function PowerBars({ powers, variant = "info", showTitle = true }) {
     return (
-        <div className="note-callout">
-            <span className="note-icon">💬</span>
-            <p>{children}</p>
+        <div
+            className={`power-bars${variant === "v3d" ? " power-bars--v3d" : ""}`}
+        >
+            {showTitle && <span className="power-title">Chỉ số</span>}
+            {powers.map((p) => {
+                const Ico = POWER_ICON[p.label] || Zap;
+                return (
+                    <div className="power-row" key={p.label}>
+                        <span className="power-label">
+                            <Ico
+                                className="power-ico"
+                                size={15}
+                                strokeWidth={2}
+                            />
+                            {p.label}
+                        </span>
+                        <span className="power-track">
+                            <span
+                                className="power-fill"
+                                style={{
+                                    width: `${Math.max(0, Math.min(100, p.value))}%`,
+                                }}
+                            />
+                        </span>
+                        <span className="power-num">{p.value}</span>
+                    </div>
+                );
+            })}
+        </div>
+    );
+}
+
+// Khối gập/mở (accordion) — dùng ở panel trang 3D để mặc định thu gọn, nhường
+// tối đa diện tích cho Canvas. Body dùng grid 0fr→1fr để trượt mượt.
+function Accordion({ title, children, defaultOpen = false }) {
+    const [open, setOpen] = useState(defaultOpen);
+    return (
+        <div className={`acc${open ? " is-open" : ""}`}>
+            <button
+                type="button"
+                className="acc-head"
+                onClick={() => setOpen((o) => !o)}
+                aria-expanded={open}
+            >
+                <span className="acc-title">{title}</span>
+                <ChevronDown
+                    className="acc-chevron"
+                    size={18}
+                    strokeWidth={2.5}
+                    aria-hidden="true"
+                />
+            </button>
+            <div className="acc-body">
+                <div className="acc-body-inner">{children}</div>
+            </div>
+        </div>
+    );
+}
+
+function NoteCallout({ children, label = "Fact", onClick }) {
+    const interactive = typeof onClick === "function";
+    const activate = interactive
+        ? (e) => {
+              if (e.type === "keydown" && e.key !== "Enter" && e.key !== " ")
+                  return;
+              e.preventDefault();
+              onClick();
+          }
+        : undefined;
+    return (
+        <div
+            className={`note-callout${interactive ? " is-interactive" : ""}`}
+            role={interactive ? "button" : undefined}
+            tabIndex={interactive ? 0 : undefined}
+            onClick={activate}
+            onKeyDown={activate}
+        >
+            <span className="note-icon">
+                <Lightbulb size={18} strokeWidth={2} />
+            </span>
+            <div className="note-body">
+                <span className="note-label">{label}</span>
+                <p>{children}</p>
+            </div>
+            {interactive && (
+                <span className="note-more">
+                    Xem thêm
+                    <ArrowRight size={13} strokeWidth={2.5} />
+                </span>
+            )}
+        </div>
+    );
+}
+
+// Popup nhỏ hiển thị chi tiết Fact — làm rõ đây là điểm chạm tương tác,
+// không phải nút "chết".
+function FactModal({ title, label = "Fact", children, onClose }) {
+    useEffect(() => {
+        const onKey = (e) => e.key === "Escape" && onClose();
+        window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
+    }, [onClose]);
+
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div
+                className="modal-card"
+                role="dialog"
+                aria-modal="true"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <div className="modal-head">
+                    <span className="modal-label">
+                        <Lightbulb size={15} strokeWidth={2} />
+                        {label}
+                    </span>
+                    <button
+                        className="modal-close"
+                        onClick={onClose}
+                        aria-label="Đóng"
+                    >
+                        <X size={18} strokeWidth={2.5} />
+                    </button>
+                </div>
+                {title && <h3 className="modal-title">{title}</h3>}
+                <p className="modal-body">{children}</p>
+            </div>
         </div>
     );
 }
@@ -484,11 +682,23 @@ function NoteCallout({ children }) {
 function InfoPage({ character, onView3D, onBack }) {
     // Vào hồ sơ -> preload model để bấm "3D View" mở tức thì.
     useEffect(() => preloadModel(character.model), [character.model]);
+    const [factOpen, setFactOpen] = useState(false);
+
+    // Gom Class + Giới tính/Tuổi/Chiều cao thành 1 "spec grid" gọn, dễ quét mắt.
+    const specs = [
+        { Ico: Tag, label: "Class", value: character.charClass },
+        ...character.stats.map((s) => ({
+            Ico: STAT_ICON[s.label] || Tag,
+            label: s.label,
+            value: s.value,
+        })),
+    ];
 
     return (
         <div className="info-page" style={accentVars(character)}>
             <button className="back-btn" onClick={onBack}>
-                ← Showcase
+                <ArrowLeft size={16} strokeWidth={2.5} />
+                Showcase
             </button>
 
             <div className="info-image-wrap">
@@ -505,25 +715,57 @@ function InfoPage({ character, onView3D, onBack }) {
                     <h1 className="char-name">{character.name}</h1>
                 </div>
 
-                <StatList stats={character.stats} />
+                {/* CTA ngay dưới tiêu đề (desktop) / ghim đáy màn hình (mobile)
+                    -> không bị "chôn" dưới thông số + tiểu sử. */}
+                <div className="info-actions">
+                    {character.model ? (
+                        <button className="view3d-btn" onClick={onView3D}>
+                            <Box size={18} strokeWidth={2.2} />
+                            Xem mô hình 3D
+                        </button>
+                    ) : (
+                        <span className="view3d-soon">Mô hình 3D sắp có</span>
+                    )}
+                </div>
+
+                <div className="spec-grid">
+                    {specs.map(({ Ico, label, value }) => (
+                        <div className="spec-cell" key={label}>
+                            <span className="spec-ico">
+                                <Ico size={18} strokeWidth={2} />
+                            </span>
+                            <span className="spec-text">
+                                <span className="spec-k">{label}</span>
+                                <span
+                                    className={`spec-v${value === TBD || value === "—" ? " is-tbd" : ""}`}
+                                >
+                                    {value}
+                                </span>
+                            </span>
+                        </div>
+                    ))}
+                </div>
+
+                <PowerBars powers={character.powers} />
 
                 <div className="bio-card">
                     <span className="bio-label">Tiểu sử</span>
                     <p>{character.bio}</p>
                 </div>
 
-                <NoteCallout>{character.note}</NoteCallout>
-
-                <div className="info-actions">
-                    {character.model ? (
-                        <button className="view3d-btn" onClick={onView3D}>
-                            3D View
-                        </button>
-                    ) : (
-                        <span className="view3d-soon">Mô hình 3D sắp có</span>
-                    )}
-                </div>
+                <NoteCallout onClick={() => setFactOpen(true)}>
+                    {character.note}
+                </NoteCallout>
             </div>
+
+            {factOpen && (
+                <FactModal
+                    title={character.name}
+                    onClose={() => setFactOpen(false)}
+                >
+                    {character.note}
+                </FactModal>
+            )}
         </div>
     );
 }
@@ -533,7 +775,11 @@ function InfoPage({ character, onView3D, onBack }) {
 // ---------------------------------------------------------------------------
 function View3DPage({ character, onBack }) {
     const captureRef = useRef(null);
+    const controlsRef = useRef(null);
     const [autoRotate, setAutoRotate] = useState(true);
+    // Trên mobile, panel thông tin là Bottom Sheet: mặc định thu gọn (chỉ hiện
+    // tiêu đề) để không che model; chạm handle để trượt lên xem chi tiết.
+    const [sheetOpen, setSheetOpen] = useState(false);
 
     // AR chỉ khả dụng trên thiết bị hỗ trợ WebXR immersive-ar (điện thoại/headset,
     // origin bảo mật). Trên desktop -> ẩn nút để không gây hiểu nhầm.
@@ -565,7 +811,8 @@ function View3DPage({ character, onBack }) {
     return (
         <div className="view3d-page" style={accentVars(character)}>
             <button className="back-btn" onClick={onBack}>
-                ← Hồ sơ
+                <ArrowLeft size={16} strokeWidth={2.5} />
+                Hồ sơ
             </button>
             <span className="v3d-deck">{character.deck} DECK</span>
             <span className="v3d-watermark">{character.name}</span>
@@ -574,47 +821,91 @@ function View3DPage({ character, onBack }) {
                 <CharacterViewer
                     character={character}
                     captureRef={captureRef}
+                    controlsRef={controlsRef}
                     autoRotate={autoRotate}
                     style={{ width: "100%", height: "100%" }}
                 />
 
-                {/* Thanh công cụ nổi: xoay tự động · chụp ảnh */}
-                <div className="v3d-tools">
+                {/* Thanh công cụ nổi: xoay tự động · đặt lại góc · chụp ảnh */}
+                {/* <div className="v3d-tools">
                     <button
                         className="v3d-tool"
                         onClick={() => setAutoRotate((r) => !r)}
                         title={autoRotate ? "Tạm dừng xoay" : "Xoay tự động"}
                         aria-pressed={autoRotate}
                     >
-                        {autoRotate ? "⏸" : "▶"}
+                        {autoRotate ? (
+                            <Pause size={18} strokeWidth={2} />
+                        ) : (
+                            <Play size={18} strokeWidth={2} />
+                        )}
+                    </button>
+                    <button
+                        className="v3d-tool"
+                        onClick={() => controlsRef.current?.reset()}
+                        title="Đặt lại góc nhìn"
+                    >
+                        <RotateCcw size={18} strokeWidth={2} />
                     </button>
                     <button
                         className="v3d-tool"
                         onClick={snapshot}
                         title="Chụp ảnh mô hình"
                     >
-                        📷
+                        <Camera size={18} strokeWidth={2} />
                     </button>
-                </div>
-
-                <p className="v3d-hint">Kéo để xoay · cuộn để phóng to</p>
+                </div> */}
             </div>
 
-            <aside className="v3d-panel">
+            <aside className={`v3d-panel${sheetOpen ? " is-open" : ""}`}>
+                {/* Handle chỉ hiện trên mobile (bottom sheet). */}
+                <button
+                    className="v3d-sheet-handle"
+                    onClick={() => setSheetOpen((o) => !o)}
+                    aria-expanded={sheetOpen}
+                    aria-label={
+                        sheetOpen ? "Thu gọn thông tin" : "Xem thông tin"
+                    }
+                >
+                    <span className="v3d-sheet-grip" />
+                    <span className="v3d-sheet-peek">
+                        {character.name} ·{" "}
+                        {sheetOpen ? "Thu gọn" : "Chỉ số & tiểu sử"}
+                        <ChevronDown
+                            className="v3d-sheet-chevron"
+                            size={15}
+                            strokeWidth={2.5}
+                        />
+                    </span>
+                </button>
+
                 <h2 className="v3d-name">{character.name}</h2>
                 <p className="v3d-tag">{character.tagline}</p>
+                <span className="char-class char-class--v3d">
+                    <Tag className="char-class-ico" size={13} strokeWidth={2} />
+                    {character.charClass}
+                </span>
 
-                <StatList stats={character.stats} variant="v3d" />
+                {/* Mặc định thu gọn -> ưu tiên diện tích cho model 3D. */}
+                <Accordion title="Thông số">
+                    <StatList stats={character.stats} variant="v3d" />
+                </Accordion>
 
-                <div className="v3d-bio">
-                    <span className="v3d-bio-label">Tiểu sử</span>
-                    <p>{character.bio}</p>
-                </div>
+                <Accordion title="Chỉ số">
+                    <PowerBars
+                        powers={character.powers}
+                        variant="v3d"
+                        showTitle={false}
+                    />
+                </Accordion>
 
-                <div className="v3d-note">
-                    <span className="note-icon">💬</span>
-                    <p>{character.note}</p>
-                </div>
+                <Accordion title="Tiểu sử">
+                    <p className="acc-text">{character.bio}</p>
+                </Accordion>
+
+                <Accordion title="Fact">
+                    <p className="acc-text">{character.note}</p>
+                </Accordion>
 
                 {arSupported && (
                     <button
@@ -622,7 +913,8 @@ function View3DPage({ character, onBack }) {
                         onClick={() => store.enterAR()}
                         title="Đặt mô hình vào không gian thật"
                     >
-                        📱 Xem trong không gian (AR)
+                        <ScanLine size={16} strokeWidth={2} />
+                        Xem trong không gian (AR)
                     </button>
                 )}
             </aside>

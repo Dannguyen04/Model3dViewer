@@ -1,0 +1,10 @@
+import pw from 'file:///C:/Users/DAN/AppData/Local/npm-cache/_npx/e41f203b7505f1fb/node_modules/playwright/index.js';
+const { chromium } = pw;
+const b = await chromium.launch({ channel: 'chrome' });
+const ctx = await b.newContext({ viewport: { width: 1800, height: 620 }, ignoreHTTPSErrors: true });
+const p = await ctx.newPage();
+await p.goto('https://localhost:5174/#/', { waitUntil: 'networkidle', timeout: 30000 });
+await p.waitForTimeout(1500);
+await p.screenshot({ path: '_aligned.png' });
+await b.close();
+console.log('done');

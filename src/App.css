@@ -21,6 +21,15 @@ body,
     position: relative;
     width: 100vw;
     height: 100vh;
+    /* dvh = chiều cao viewport động: khung luôn vừa khít dù thanh địa chỉ
+       trên mobile thò ra / thụt vào (không còn nhảy layout, cắt Canvas 3D). */
+    height: 100dvh;
+}
+
+/* Icon lucide: không co méo trong flex, canh giữa theo dòng chữ. */
+.lucide {
+    flex-shrink: 0;
+    vertical-align: middle;
 }
 
 /* =========================================================================
@@ -129,6 +138,9 @@ body,
 .info-panel > *:nth-child(5) {
     animation-delay: 0.67s;
 }
+.info-panel > *:nth-child(6) {
+    animation-delay: 0.8s;
+}
 
 .info-head {
     display: flex;
@@ -224,8 +236,10 @@ body,
 }
 
 .stat-icon {
-    font-size: 18px;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-light);
 }
 
 .stat-label {
@@ -268,6 +282,7 @@ body,
     display: flex;
     align-items: flex-start;
     gap: 12px;
+    margin-block-end: 10%;
     padding: 14px 18px;
     border: 1px solid var(--accent);
     border-radius: 14px;
@@ -277,8 +292,15 @@ body,
 }
 
 .note-icon {
-    font-size: 20px;
-    line-height: 1.4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border-radius: var(--r-md);
+    background: color-mix(in srgb, var(--accent) 22%, transparent);
+    color: var(--accent-light);
 }
 
 .note-callout p {
@@ -287,14 +309,363 @@ body,
     color: #eafaf4;
 }
 
+.note-body {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+    min-width: 0;
+}
+
+.note-label {
+    font-family: var(--font-display);
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-size: 11px;
+    color: var(--accent-light);
+}
+
+/* Nhãn Class (tĩnh) — cố tình KHÔNG giống nút: không viền khung, chỉ là
+   một tag chữ nhỏ có gạch accent bên trái để phân biệt với nút bấm. */
+.char-class {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    align-self: flex-start;
+    padding: 2px 0 2px 12px;
+    border-left: 3px solid var(--accent);
+    color: var(--accent-light);
+    font-family: var(--font-display);
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 14px;
+    cursor: default;
+}
+
+.char-class-ico {
+    font-style: normal;
+    font-size: 13px;
+}
+
+.char-class--v3d {
+    margin-top: 4px;
+    padding: 4px 12px;
+    font-size: 13px;
+}
+
+/* Class hiển thị nhỏ trên thẻ showcase */
+.tcard-class {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 6px;
+    font-size: 11px;
+    letter-spacing: 0.3px;
+    color: #fff;
+    opacity: 0.82;
+}
+
+/* 5 chỉ số chiến đấu dạng thanh bar */
+.power-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    padding: 16px 18px;
+    border-radius: 14px;
+    border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+    background: color-mix(in srgb, var(--accent) 10%, rgba(0, 0, 0, 0.25));
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.power-title {
+    font-family: var(--font-display);
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 13px;
+    color: var(--accent-light);
+    margin-bottom: 2px;
+}
+
+.power-row {
+    display: grid;
+    grid-template-columns: 88px 1fr 32px;
+    align-items: center;
+    gap: 10px;
+}
+
+.power-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    color: #eafaf4;
+}
+.power-ico {
+    color: var(--accent-light);
+}
+
+.power-track {
+    position: relative;
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    overflow: hidden;
+}
+
+.power-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    border-radius: 999px;
+    background: linear-gradient(
+        90deg,
+        var(--accent-dark),
+        var(--accent),
+        var(--accent-light)
+    );
+    box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 60%, transparent);
+    transform-origin: left;
+    animation: power-grow 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes power-grow {
+    from {
+        transform: scaleX(0);
+    }
+    to {
+        transform: scaleX(1);
+    }
+}
+
+.power-num {
+    font-family: var(--font-display);
+    font-size: 14px;
+    text-align: right;
+    color: #fff;
+}
+
+/* Thu gọn cho panel trang 3D */
+.power-bars--v3d {
+    padding: 12px 14px;
+    gap: 7px;
+}
+.power-bars--v3d .power-row {
+    grid-template-columns: 76px 1fr 28px;
+}
+.power-bars--v3d .power-label {
+    font-size: 12px;
+}
+
+/* --- FACT bấm được (affordance rõ ràng: có gợi ý "Xem thêm") --- */
+.note-callout.is-interactive {
+    cursor: pointer;
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        background 0.15s ease;
+}
+.note-callout.is-interactive:hover {
+    transform: translateY(-2px);
+    background: color-mix(in srgb, var(--accent) 22%, transparent);
+    box-shadow: 0 8px 22px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+.note-callout.is-interactive:focus-visible {
+    outline: 2px solid var(--accent-light);
+    outline-offset: 2px;
+}
+/* Cắt gọn còn 2 dòng -> popup "Xem thêm" mới có giá trị (hiện full). */
+.note-callout.is-interactive p {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.note-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+    align-self: flex-end;
+    white-space: nowrap;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 12px;
+    color: var(--accent-light);
+    opacity: 0.85;
+}
+
+/* --- Popup Fact --- */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    animation: pageFade 0.2s ease both;
+}
+.modal-card {
+    width: min(460px, 100%);
+    max-height: 80dvh;
+    overflow-y: auto;
+    padding: 22px 24px 26px;
+    border-radius: 18px;
+    border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+    background: linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--accent) 14%, #14171c),
+        #14171c
+    );
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+    /* Xuất hiện mềm: phóng nhẹ + mờ dần thay vì bật đột ngột. */
+    animation: modalPop 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes modalPop {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+.modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.modal-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--font-display);
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-size: 13px;
+    color: var(--accent-light);
+}
+.modal-close {
+    /* Vùng chạm tối thiểu 44x44px (chuẩn mobile), icon căn giữa bằng Flexbox.
+       Lùi mép phải/trên để icon vẫn thẳng hàng thị giác dù vùng chạm to hơn. */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin: -8px -8px -8px 0;
+    flex-shrink: 0;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.04);
+    color: #fff;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+.modal-close:hover {
+    background: rgba(255, 255, 255, 0.14);
+}
+.modal-title {
+    margin-top: 10px;
+    font-family: var(--font-display);
+    font-style: italic;
+    text-transform: uppercase;
+    font-size: 22px;
+    color: #fff;
+}
+.modal-body {
+    margin-top: 10px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #eafaf4;
+}
+
+/* --- Handle Bottom Sheet (chỉ hiện trên mobile qua @media) --- */
+.v3d-sheet-handle {
+    display: none;
+}
+
+/* --- Accordion (thu gọn/mở) ở panel 3D --- */
+.acc {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.acc-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 2px;
+    background: none;
+    border: none;
+    color: #fff;
+    text-align: left;
+    cursor: pointer;
+}
+.acc-title {
+    font-family: var(--font-display);
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-size: 14px;
+    color: var(--accent-light);
+}
+.acc-chevron {
+    color: var(--accent-light);
+    font-size: 13px;
+    transition: transform 0.25s ease;
+}
+.acc.is-open .acc-chevron {
+    transform: rotate(180deg);
+}
+/* grid 0fr -> 1fr: trượt mở mượt mà không cần biết chiều cao trước. */
+.acc-body {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s ease;
+}
+.acc.is-open .acc-body {
+    grid-template-rows: 1fr;
+}
+.acc-body-inner {
+    overflow: hidden;
+    /* min-height:0 BẮT BUỘC: nếu không, grid item giữ min-content -> không thu
+       gọn được về 0fr (nội dung rỉ ra đè khối dưới). */
+    min-height: 0;
+}
+.acc.is-open .acc-body-inner {
+    padding-bottom: 12px;
+}
+.acc-text {
+    font-size: 14px;
+    line-height: 1.55;
+    color: #eafaf4;
+}
+
 .view3d-btn {
     position: relative;
     overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
     align-self: flex-start;
     margin-top: 6px;
-    padding: 15px 40px;
+    padding: 14px 32px;
     border: none;
-    border-radius: 10px;
+    border-radius: var(--r-md);
     background: linear-gradient(
         160deg,
         var(--accent) 0%,
@@ -369,7 +740,10 @@ body,
     width: 100%;
     height: 100%;
     overflow-y: auto;
-    padding: 7vh 5vw 10vh;
+    /* KHÔNG để padding-top ở đây: sticky neo theo content-box của khung cuộn,
+       padding-top sẽ đẩy thanh filter dính xuống một khoảng -> lộ dải thẻ phía
+       trên. Khoảng cách đầu trang chuyển sang .showcase-head. */
+    padding: 0 5vw 10vh;
     background:
         radial-gradient(
             70% 50% at 50% -5%,
@@ -381,8 +755,25 @@ body,
 }
 
 .showcase-head {
-    text-align: center;
-    margin-bottom: 26px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    max-width: 1180px;
+    margin: 0 auto var(--sp-5);
+    padding-top: 7vh;
+}
+
+.showcase-count {
+    flex-shrink: 0;
+    padding-bottom: 6px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.55);
+    white-space: nowrap;
+}
+.showcase-count em {
+    font-style: normal;
+    color: rgba(255, 255, 255, 0.35);
 }
 
 /* Tabs lọc theo deck */
@@ -426,19 +817,24 @@ body,
         color-mix(in srgb, var(--tab, var(--brand-orange)) 45%, transparent);
 }
 
+.showcase-brand {
+    text-align: left;
+}
+
 .showcase-title {
     font-family: var(--font-display);
     font-style: italic;
     text-transform: uppercase;
-    font-size: clamp(34px, 6vw, 72px);
+    font-size: clamp(30px, 4.6vw, 58px);
+    line-height: 1;
     letter-spacing: 1px;
     color: #fff;
     text-shadow: 0 4px 30px rgba(232, 70, 30, 0.35);
 }
 
 .showcase-sub {
-    margin-top: 10px;
-    font-size: 14px;
+    margin-bottom: 8px;
+    font-size: 13px;
     letter-spacing: 3px;
     color: var(--brand-orange);
 }
@@ -585,6 +981,9 @@ body,
     top: 10px;
     right: 10px;
     z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     padding: 3px 9px;
     border-radius: 999px;
     background: #fff;
@@ -644,6 +1043,8 @@ body,
     top: 22px;
     right: 24px;
     z-index: 20;
+    /* Nhãn trang trí -> để chuột "xuyên qua" xoay model ở góc này. */
+    pointer-events: none;
     padding: 6px 14px;
     border-radius: 999px;
     background: color-mix(in srgb, var(--accent) 90%, #000);
@@ -742,7 +1143,7 @@ body,
     font-style: italic;
     text-transform: uppercase;
     font-size: clamp(26px, 3vw, 40px);
-    line-height: 0.95;
+    line-height: 1.5;
     color: #fff;
     padding-bottom: 12px;
     border-bottom: 3px solid var(--accent);
@@ -771,7 +1172,10 @@ body,
 }
 
 .v3d-stat-ico {
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-light);
 }
 .v3d-stat-label {
     color: var(--accent-light);
@@ -817,10 +1221,14 @@ body,
 }
 
 .ar-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     margin-top: auto;
     padding: 14px 18px;
     border: none;
-    border-radius: 10px;
+    border-radius: var(--r-md);
     background: linear-gradient(
         160deg,
         var(--accent) 0%,
@@ -851,13 +1259,17 @@ body,
     top: 20px;
     left: 20px;
     z-index: 20;
-    padding: 10px 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 16px 9px 13px;
     border: none;
     border-radius: 999px;
     background: #fff;
     color: #111;
     font-family: inherit;
     font-size: 15px;
+    font-weight: 500;
     cursor: pointer;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
 }
@@ -960,33 +1372,111 @@ body,
     border: 1px solid rgba(255, 90, 70, 0.4);
 }
 
+/* --- Spec grid (Info): gom Class + Giới tính/Tuổi/Chiều cao thành thẻ gọn --- */
+.spec-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--sp-2);
+}
+.spec-cell {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    min-width: 0;
+    padding: var(--sp-3);
+    border: 1px solid var(--hair);
+    border-radius: var(--r-md);
+    background: rgba(255, 255, 255, 0.03);
+}
+.spec-ico {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border-radius: var(--r-sm);
+    background: color-mix(in srgb, var(--accent) 16%, transparent);
+    color: var(--accent-light);
+}
+.spec-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+.spec-k {
+    font-size: 11px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    opacity: 0.85;
+}
+.spec-v {
+    font-size: 15px;
+    font-weight: 500;
+    color: #fff;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.spec-v.is-tbd {
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 400;
+}
+
+/* Chevron của handle bottom-sheet (mobile) — xoay khi sheet mở. */
+.v3d-sheet-chevron {
+    transition: transform 0.3s ease;
+}
+.v3d-panel.is-open .v3d-sheet-chevron {
+    transform: rotate(180deg);
+}
+
 /* =========================================================================
    THANH ĐIỀU KHIỂN SHOWCASE (tabs deck + ô tìm kiếm)
    ========================================================================= */
 .showcase-controls {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    gap: 16px;
-    margin: 0 auto 34px;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    /* Bám dính khi cuộn: filter + search luôn trong tầm với. Nền full-bleed
+       (kính mờ) nhưng nội dung canh vào cột 1180 trùng với lưới thẻ. */
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    margin: 0 -5vw 28px;
+    padding: 14px max(5vw, calc((100vw - 1180px) / 2));
+    background: color-mix(in srgb, var(--bg-black) 92%, transparent);
+    backdrop-filter: blur(16px) saturate(1.1);
+    -webkit-backdrop-filter: blur(16px) saturate(1.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.7);
 }
 
 .showcase-controls .deck-tabs {
     margin: 0;
+    flex: 1;
+    justify-content: flex-start;
+    max-width: none;
 }
 
 .search-box {
     position: relative;
     display: flex;
     align-items: center;
-    width: min(420px, 90vw);
+    flex-shrink: 0;
+    width: min(300px, 100%);
 }
 
 .search-ico {
     position: absolute;
-    left: 14px;
-    font-size: 14px;
-    opacity: 0.6;
+    left: 13px;
+    display: flex;
+    color: rgba(255, 255, 255, 0.45);
     pointer-events: none;
 }
 
@@ -1197,18 +1687,92 @@ body,
    MÀN HÌNH HẸP (mobile) — đặt ở CUỐI file để mọi override thắng theo thứ tự nguồn.
    ========================================================================= */
 @media (max-width: 820px) {
+    /* --- Showcase mobile: header xếp dọc, filter vuốt ngang, lưới dày hơn. --- */
+    .showcase-head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        padding-top: 38px;
+        margin-bottom: 16px;
+    }
+    .showcase-title {
+        font-size: clamp(26px, 8vw, 40px);
+    }
+    .showcase-sub {
+        margin-bottom: 6px;
+        font-size: 12px;
+        letter-spacing: 2px;
+    }
+    .showcase-count {
+        padding-bottom: 0;
+        font-size: 13px;
+    }
+    /* Cụm filter về dạng cột: hàng tag vuốt ngang + ô tìm full chiều ngang. */
+    .showcase-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 10px 5vw;
+        margin-bottom: 20px;
+    }
+    .showcase-controls .deck-tabs {
+        flex: none;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        max-width: 100%;
+        margin: 0;
+        padding-bottom: 2px;
+        /* Hé mờ mép phải -> gợi ý còn tag để vuốt tiếp (như native app). */
+        -webkit-mask-image: linear-gradient(90deg, #000 90%, transparent);
+        mask-image: linear-gradient(90deg, #000 90%, transparent);
+    }
+    .showcase-controls .deck-tabs::-webkit-scrollbar {
+        display: none;
+    }
+    .deck-tab {
+        flex: 0 0 auto;
+        scroll-snap-align: start;
+    }
+    .search-box {
+        width: 100%;
+    }
+    /* Điện thoại: cố định 2 cột -> mỗi hàng đúng 2 nhân vật. */
+    .showcase-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+    }
+    /* Bỏ tỉ lệ 7:12 (quá cao) và tính chiều cao thẻ theo viewport để 1 màn hình
+       vừa 2 hàng = 4 nhân vật. 290px ≈ header + thanh lọc + khoảng cách. Ảnh dùng
+       object-fit: contain nên co lại chứ không bị cắt. */
+    .tcard-inner {
+        aspect-ratio: auto;
+        height: calc((100svh - 290px) / 2);
+        min-height: 190px;
+    }
+
     /* --- Trang hồ sơ --- */
+    /* Điện thoại: xếp DỌC một cột — ảnh hero trên, hồ sơ full chiều ngang dưới.
+       (Trước đây chia 2 cột khiến panel bị bóp còn ~1/2 màn hình, rất chật.) */
     .info-page {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto auto;
-        align-items: start;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
         height: 100%;
         overflow-y: auto;
-        gap: 10px;
-        padding: 68px 6vw 40px;
+        gap: 16px;
+        padding: 60px 6vw calc(88px + env(safe-area-inset-bottom));
+    }
+    .info-image-wrap {
+        height: auto;
+        flex: none;
     }
     .info-image {
-        max-height: 38vh;
+        max-height: 34vh;
+        max-width: 82%;
     }
     .info-watermark {
         font-size: 72px;
@@ -1219,8 +1783,20 @@ body,
     .char-name {
         font-size: clamp(32px, 12vw, 52px);
     }
+    /* CTA ghim đáy màn hình -> luôn trong tầm mắt dù đang đọc tiểu sử. */
     .info-actions {
-        width: 100%;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 40;
+        flex-direction: row;
+        justify-content: center;
+        padding: 12px 6vw calc(12px + env(safe-area-inset-bottom));
+        background: color-mix(in srgb, var(--bg-black) 82%, transparent);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
     .view3d-btn,
     .view3d-soon {
@@ -1228,47 +1804,87 @@ body,
         text-align: center;
     }
 
-    /* --- Trang 3D trên mobile: model chiếm TRỌN màn hình, KHÔNG panel thông tin
-       (thông tin đã có ở trang Hồ sơ) -> không bị đẩy xuống khi 3D tải xong. --- */
+    /* --- Trang 3D trên mobile: model chiếm trọn màn hình; panel thông tin
+       biến thành BOTTOM SHEET (ngăn kéo trượt từ dưới) để không che nhân vật. --- */
     .view3d-page {
         flex-direction: column;
         overflow: hidden;
     }
     .v3d-stage {
         /* Chiều cao XÁC ĐỊNH (không dùng flex-auto) để <Canvas height:100%>
-           phân giải được — nếu không canvas co về 0 và model/nút biến mất.
-           Panel đã ẩn (height:0) nên stage lấy trọn 100%. */
+           phân giải được — nếu không canvas co về 0 và model/nút biến mất. */
         flex: none;
         height: 100%;
     }
-    /* Panel co lại còn 0 nhưng vẫn tồn tại để chứa nút AR (fixed). */
+    /* Sheet: mặc định thu gọn (chỉ ló handle ~66px), chạm để trượt lên.
+       pointer-events mặc định = auto, nhưng vì sheet chỉ chiếm dải đáy khi
+       thu gọn nên phần Canvas phía trên vẫn xoay/zoom bình thường. */
     .v3d-panel {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
         width: 100%;
-        height: 0;
-        min-height: 0;
-        padding: 0;
-        overflow: visible;
+        height: auto;
+        max-height: 82dvh;
+        z-index: 25;
+        gap: 12px;
+        padding: 0 20px calc(20px + env(safe-area-inset-bottom));
+        background: rgba(11, 13, 16, 0.92);
+        backdrop-filter: blur(18px) saturate(1.15);
+        -webkit-backdrop-filter: blur(18px) saturate(1.15);
+        border-left: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 20px 20px 0 0;
+        box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.5);
+        overflow: hidden;
+        transform: translateY(calc(100% - 66px));
+        transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+        animation: none;
+    }
+    .v3d-panel.is-open {
+        transform: translateY(0);
+        overflow-y: auto;
+    }
+    /* Handle bám đỉnh sheet, luôn thấy để chạm mở/đóng. */
+    .v3d-sheet-handle {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 7px;
+        position: sticky;
+        top: 0;
+        width: 100%;
+        padding: 12px 0 8px;
         background: none;
         border: none;
-        animation: none; /* bỏ transform -> nút AR fixed bám đúng viewport */
+        cursor: pointer;
     }
-    /* Ẩn nội dung chữ trên mobile — chỉ giữ model + watermark + chip deck. */
-    .v3d-name,
-    .v3d-tag,
-    .v3d-stats,
-    .v3d-bio,
-    .v3d-note {
-        display: none;
+    .v3d-sheet-grip {
+        width: 42px;
+        height: 4px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.35);
     }
-
-    /* Nút AR ghim đáy viewport trên mobile — luôn thấy. */
+    .v3d-sheet-peek {
+        max-width: 80vw;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-family: var(--font-display);
+        font-style: italic;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 12.5px;
+        color: var(--accent-light);
+    }
+    .v3d-name {
+        margin-top: 2px;
+    }
+    /* Nút AR nằm trong sheet (không fixed) -> không đè lên handle/tools. */
     .ar-btn {
-        position: fixed;
-        left: 16px;
-        right: 16px;
-        bottom: 16px;
-        z-index: 30;
-        margin-top: 0;
+        position: static;
+        margin-top: 4px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
     }
     .v3d-watermark {

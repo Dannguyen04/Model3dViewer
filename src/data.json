@@ -1,22 +1,40 @@
 {
     "characterCount": 20,
     "decks": {
-        "GROW":      { "main": "#1fa36b", "light": "#6fbf3b", "dark": "#0f5c3c" },
-        "HERO":      { "main": "#1e5fa8", "light": "#4a90d9", "dark": "#123a66" },
-        "ADVENTURE": { "main": "#b01818", "light": "#e8433a", "dark": "#6e0f0f" },
-        "EVENT":     { "main": "#9b1fc4", "light": "#c64de8", "dark": "#5e1178" },
-        "STRATEGY":  { "main": "#35c4e8", "light": "#a8e8f5", "dark": "#1e7c93" },
-        "EQUIPMENT": { "main": "#d98b10", "light": "#e6a817", "dark": "#8a5606" }
+        "GROW": { "main": "#1fa36b", "light": "#6fbf3b", "dark": "#0f5c3c" },
+        "HERO": { "main": "#1e5fa8", "light": "#4a90d9", "dark": "#123a66" },
+        "ADVENTURE": {
+            "main": "#b01818",
+            "light": "#e8433a",
+            "dark": "#6e0f0f"
+        },
+        "EVENT": { "main": "#9b1fc4", "light": "#c64de8", "dark": "#5e1178" },
+        "STRATEGY": {
+            "main": "#35c4e8",
+            "light": "#a8e8f5",
+            "dark": "#1e7c93"
+        },
+        "EQUIPMENT": {
+            "main": "#d98b10",
+            "light": "#e6a817",
+            "dark": "#8a5606"
+        }
     },
     "models": {
-        "Untitled_Artwork 1.webp":  "/1.glb",
-        "Untitled_Artwork 2.webp":  "/2.glb",
-        "Untitled_Artwork 3.webp":  "/3.glb",
-        "Untitled_Artwork 4.webp":  "/4.glb",
-        "Untitled_Artwork 6.webp":  "/6.glb",
-        "Untitled_Artwork 8.webp":  "/8.glb",
+        "Untitled_Artwork 1.webp": "/1.glb",
+        "Untitled_Artwork 2.webp": "/2.glb",
+        "Untitled_Artwork 3.webp": "/3.glb",
+        "Untitled_Artwork 4.webp": "/4.glb",
+        "Untitled_Artwork 5.webp": "/5.glb",
+        "Untitled_Artwork 6.webp": "/6.glb",
+        "Untitled_Artwork 7.webp": "/7.glb",
+        "Untitled_Artwork 8.webp": "/8.glb",
+        "Untitled_Artwork 9.webp": "/9.glb",
         "Untitled_Artwork 10.webp": "/10.glb",
         "Untitled_Artwork 11.webp": "/11.glb",
+        "Untitled_Artwork 12.webp": "/12.glb",
+        "Untitled_Artwork 13.webp": "/13.glb",
+        "Untitled_Artwork 14.webp": "/14.glb",
         "Untitled_Artwork 15.webp": "/15.glb",
         "Untitled_Artwork 16.webp": "/16.glb",
         "Untitled_Artwork 17.webp": "/17.glb",
@@ -25,19 +43,405 @@
         "Untitled_Artwork 20.webp": "/20.glb"
     },
     "profiles": {
+        "Untitled_Artwork 1.webp": {
+            "name": "Nhân vật #01",
+            "tagline": "Đang cập nhật",
+            "class": "Đang cập nhật",
+            "deck": "GROW",
+            "stats": [
+                { "icon": "♂️", "label": "Giới tính", "value": "—" },
+                { "icon": "🎂", "label": "Tuổi", "value": "—" },
+                { "icon": "📏", "label": "Chiều cao", "value": "—" }
+            ],
+            "powers": [
+                { "label": "Sức mạnh", "value": 62 },
+                { "label": "Phòng thủ", "value": 55 },
+                { "label": "Tốc độ", "value": 78 },
+                { "label": "Năng lượng", "value": 60 },
+                { "label": "Kỹ năng", "value": 70 }
+            ],
+            "bio": "Đang cập nhật.",
+            "note": "Đang cập nhật."
+        },
+        "Untitled_Artwork 2.webp": {
+            "name": "Nhân vật #02",
+            "tagline": "Đang cập nhật",
+            "class": "Đang cập nhật",
+            "deck": "HERO",
+            "stats": [
+                { "icon": "♂️", "label": "Giới tính", "value": "—" },
+                { "icon": "🎂", "label": "Tuổi", "value": "—" },
+                { "icon": "📏", "label": "Chiều cao", "value": "—" }
+            ],
+            "powers": [
+                { "label": "Sức mạnh", "value": 88 },
+                { "label": "Phòng thủ", "value": 72 },
+                { "label": "Tốc độ", "value": 45 },
+                { "label": "Năng lượng", "value": 80 },
+                { "label": "Kỹ năng", "value": 65 }
+            ],
+            "bio": "Đang cập nhật.",
+            "note": "Đang cập nhật."
+        },
+        "Untitled_Artwork 3.webp": {
+            "name": "Nhân vật #03",
+            "tagline": "Đang cập nhật",
+            "class": "Đang cập nhật",
+            "deck": "ADVENTURE",
+            "stats": [
+                { "icon": "♂️", "label": "Giới tính", "value": "—" },
+                { "icon": "🎂", "label": "Tuổi", "value": "—" },
+                { "icon": "📏", "label": "Chiều cao", "value": "—" }
+            ],
+            "powers": [
+                { "label": "Sức mạnh", "value": 74 },
+                { "label": "Phòng thủ", "value": 90 },
+                { "label": "Tốc độ", "value": 50 },
+                { "label": "Năng lượng", "value": 68 },
+                { "label": "Kỹ năng", "value": 58 }
+            ],
+            "bio": "Đang cập nhật.",
+            "note": "Đang cập nhật."
+        },
+        "Untitled_Artwork 4.webp": {
+            "name": "Nhân vật #04",
+            "tagline": "Đang cập nhật",
+            "class": "Đang cập nhật",
+            "deck": "EVENT",
+            "stats": [
+                { "icon": "♂️", "label": "Giới tính", "value": "—" },
+                { "icon": "🎂", "label": "Tuổi", "value": "—" },
+                { "icon": "📏", "label": "Chiều cao", "value": "—" }
+            ],
+            "powers": [
+                { "label": "Sức mạnh", "value": 55 },
+                { "label": "Phòng thủ", "value": 48 },
+                { "label": "Tốc độ", "value": 92 },
+                { "label": "Năng lượng", "value": 70 },
+                { "label": "Kỹ năng", "value": 82 }
+            ],
+            "bio": "Đang cập nhật.",
+            "note": "Đang cập nhật."
+        },
+        "Untitled_Artwork 5.webp": {
+            "name": "Nhân vật #05",
+            "tagline": "Đang cập nhật",
+            "class": "Đang cập nhật",
+            "deck": "STRATEGY",
+            "stats": [
+                { "icon": "♂️", "label": "Giới tính", "value": "—" },
+                { "icon": "🎂", "label": "Tuổi", "value": "—" },
+                { "icon": "📏", "label": "Chiều cao", "value": "—" }
+            ],
+            "powers": [
+                { "label": "Sức mạnh", "value": 80 },
+                { "label": "Phòng thủ", "value": 66 },
+                { "label": "Tốc độ", "value": 60 },
+                { "label": "Năng lượng", "value": 88 },
+                { "label": "Kỹ năng", "value": 75 }
+            ],
+            "bio": "Đang cập nhật.",
+            "note": "Đang cập nhật."
+        },
+        "Untitled_Artwork 6.webp": {
+            "name": "Nhân vật #06",
+            "tagline": "Đang cập nhật",
+            "class": "Đang cập nhật",
+            "deck": "EQUIPMENT",
+            "stats": [
+                { "icon": "♂️", "label": "Giới tính", "value": "—" },
+                { "icon": "🎂", "label": "Tuổi", "value": "—" },
+                { "icon": "📏", "label": "Chiều cao", "value": "—" }
+            ],
+            "powers": [
+                { "label": "Sức mạnh", "value": 70 },
+                { "label": "Phòng thủ", "value": 85 },
+                { "label": "Tốc độ", "value": 40 },
+                { "label": "Năng lượng", "value": 62 },
+                { "label": "Kỹ năng", "value": 60 }
+            ],
+            "bio": "Đang cập nhật.",
+            "note": "Đang cập nhật."
+        },
+        "Untitled_Artwork 7.webp": {
+            "name": "Nhân vật #07",
+            "tagline": "Đang cập nhật",
+            "class": "Đang cập nhật",
+            "deck": "GROW",
+            "stats": [
+                { "icon": "♂️", "label": "Giới tính", "value": "—" },
+                { "icon": "🎂", "label": "Tuổi", "value": "—" },
+                { "icon": "📏", "label": "Chiều cao", "value": "—" }
+            ],
+            "powers": [
+                { "label": "Sức mạnh", "value": 66 },
+                { "label": "Phòng thủ", "value": 58 },
+                { "label": "Tốc độ", "value": 74 },
+                { "label": "Năng lượng", "value": 72 },
+                { "label": "Kỹ năng", "value": 88 }
+            ],
+            "bio": "Đang cập nhật.",
+            "note": "Đang cập nhật."
+        },
         "Untitled_Artwork 8.webp": {
             "name": "Borack Wesker",
             "tagline": "Người chế thuốc giải độc",
+            "class": "Alchemist",
             "deck": "GROW",
             "stats": [
                 { "icon": "♂️", "label": "Giới tính", "value": "Nam" },
-                { "icon": "🎂", "label": "Tuổi",      "value": "18" },
-                { "icon": "📏", "label": "Chiều cao", "value": "166 cm" },
-                { "icon": "💇", "label": "Tóc",       "value": "Xám · side part + băng rô trên trán" },
-                { "icon": "👁", "label": "Mắt",       "value": "Xanh lam" }
+                { "icon": "🎂", "label": "Tuổi", "value": "18" },
+                { "icon": "📏", "label": "Chiều cao", "value": "166 cm" }
+            ],
+            "powers": [
+                { "label": "Sức mạnh", "value": 45 },
+                { "label": "Phòng thủ", "value": 52 },
+                { "label": "Tốc độ", "value": 60 },
+                { "label": "Năng lượng", "value": 95 },
+                { "label": "Kỹ năng", "value": 90 }
             ],
             "bio": "Dáng người nhỏ nhắn do di chứng của các cuộc thí nghiệm hoá học khi phát triển công nghệ giải độc mới. Tính cách ôn hoà, thân thiện nhưng không thể nói được vì tuyến nước bọt có khả năng giải độc rất lớn nên luôn được thu thập để tạo thuốc giải. Thích nấu ăn.",
             "note": "Ngôn ngữ ký hiệu là yêu cầu để giao tiếp với cậu ta."
+        },
+        "Untitled_Artwork 9.webp": {
+            "name": "Nhân vật #09",
+            "tagline": "Đang cập nhật",
+            "class": "Đang cập nhật",
+            "deck": "ADVENTURE",
+            "stats": [
+                { "icon": "♂️", "label": "Giới tính", "value": "—" },
+                { "icon": "🎂", "label": "Tuổi", "value": "—" },
+                { "icon": "📏", "label": "Chiều cao", "value": "—" }
+            ],
+            "powers": [
+                { "label": "Sức mạnh", "value": 92 },
+                { "label": "Phòng thủ", "value": 78 },
+                { "label": "Tốc độ", "value": 55 },
+                { "label": "Năng lượng", "value": 66 },
+                { "label": "Kỹ năng", "value": 60 }
+            ],
+            "bio": "Đang cập nhật.",
+            "note": "Đang cập nhật."
+        },
+        "Untitled_Artwork 10.webp": {
+            "name": "Nhân vật #10",
+            "tagline": "Đang cập nhật",
+            "class": "Đang cập nhật",
+            "deck": "EVENT",
+            "stats": [
+                { "icon": "♂️", "label": "Giới tính", "value": "—" },
+                { "icon": "🎂", "label": "Tuổi", "value": "—" },
+                { "icon": "📏", "label": "Chiều cao", "value": "—" }
+            ],
+            "powers": [
+                { "label": "Sức mạnh", "value": 58 },
+                { "label": "Phòng thủ", "value": 62 },
+                { "label": "Tốc độ", "value": 86 },
+                { "label": "Năng lượng", "value": 74 },
+                { "label": "Kỹ năng", "value": 70 }
+            ],
+            "bio": "Đang cập nhật.",
+            "note": "Đang cập nhật."
+        },
+        "Untitled_Artwork 11.webp": {
+            "name": "Nhân vật #11",
+            "tagline": "Đang cập nhật",
+            "class": "Đang cập nhật",
+            "deck": "STRATEGY",
+            "stats": [
+                { "icon": "♂️", "label": "Giới tính", "value": "—" },
+                { "icon": "🎂", "label": "Tuổi", "value": "—" },
+                { "icon": "📏", "label": "Chiều cao", "value": "—" }
+            ],
+            "powers": [
+                { "label": "Sức mạnh", "value": 76 },
+                { "label": "Phòng thủ", "value": 55 },
+                { "label": "Tốc độ", "value": 68 },
+                { "label": "Năng lượng", "value": 82 },
+                { "label": "Kỹ năng", "value": 84 }
+            ],
+            "bio": "Đang cập nhật.",
+            "note": "Đang cập nhật."
+        },
+        "Untitled_Artwork 12.webp": {
+            "name": "Nhân vật #12",
+            "tagline": "Đang cập nhật",
+            "class": "Đang cập nhật",
+            "deck": "EQUIPMENT",
+            "stats": [
+                { "icon": "♂️", "label": "Giới tính", "value": "—" },
+                { "icon": "🎂", "label": "Tuổi", "value": "—" },
+                { "icon": "📏", "label": "Chiều cao", "value": "—" }
+            ],
+            "powers": [
+                { "label": "Sức mạnh", "value": 84 },
+                { "label": "Phòng thủ", "value": 88 },
+                { "label": "Tốc độ", "value": 42 },
+                { "label": "Năng lượng", "value": 60 },
+                { "label": "Kỹ năng", "value": 55 }
+            ],
+            "bio": "Đang cập nhật.",
+            "note": "Đang cập nhật."
+        },
+        "Untitled_Artwork 13.webp": {
+            "name": "Nhân vật #13",
+            "tagline": "Đang cập nhật",
+            "class": "Đang cập nhật",
+            "deck": "GROW",
+            "stats": [
+                { "icon": "♂️", "label": "Giới tính", "value": "—" },
+                { "icon": "🎂", "label": "Tuổi", "value": "—" },
+                { "icon": "📏", "label": "Chiều cao", "value": "—" }
+            ],
+            "powers": [
+                { "label": "Sức mạnh", "value": 60 },
+                { "label": "Phòng thủ", "value": 50 },
+                { "label": "Tốc độ", "value": 80 },
+                { "label": "Năng lượng", "value": 76 },
+                { "label": "Kỹ năng", "value": 78 }
+            ],
+            "bio": "Đang cập nhật.",
+            "note": "Đang cập nhật."
+        },
+        "Untitled_Artwork 14.webp": {
+            "name": "Nhân vật #14",
+            "tagline": "Đang cập nhật",
+            "class": "Đang cập nhật",
+            "deck": "HERO",
+            "stats": [
+                { "icon": "♂️", "label": "Giới tính", "value": "—" },
+                { "icon": "🎂", "label": "Tuổi", "value": "—" },
+                { "icon": "📏", "label": "Chiều cao", "value": "—" }
+            ],
+            "powers": [
+                { "label": "Sức mạnh", "value": 90 },
+                { "label": "Phòng thủ", "value": 74 },
+                { "label": "Tốc độ", "value": 58 },
+                { "label": "Năng lượng", "value": 70 },
+                { "label": "Kỹ năng", "value": 62 }
+            ],
+            "bio": "Đang cập nhật.",
+            "note": "Đang cập nhật."
+        },
+        "Untitled_Artwork 15.webp": {
+            "name": "Nhân vật #15",
+            "tagline": "Đang cập nhật",
+            "class": "Đang cập nhật",
+            "deck": "ADVENTURE",
+            "stats": [
+                { "icon": "♂️", "label": "Giới tính", "value": "—" },
+                { "icon": "🎂", "label": "Tuổi", "value": "—" },
+                { "icon": "📏", "label": "Chiều cao", "value": "—" }
+            ],
+            "powers": [
+                { "label": "Sức mạnh", "value": 68 },
+                { "label": "Phòng thủ", "value": 82 },
+                { "label": "Tốc độ", "value": 64 },
+                { "label": "Năng lượng", "value": 66 },
+                { "label": "Kỹ năng", "value": 72 }
+            ],
+            "bio": "Đang cập nhật.",
+            "note": "Đang cập nhật."
+        },
+        "Untitled_Artwork 16.webp": {
+            "name": "Nhân vật #16",
+            "tagline": "Đang cập nhật",
+            "class": "Đang cập nhật",
+            "deck": "EVENT",
+            "stats": [
+                { "icon": "♂️", "label": "Giới tính", "value": "—" },
+                { "icon": "🎂", "label": "Tuổi", "value": "—" },
+                { "icon": "📏", "label": "Chiều cao", "value": "—" }
+            ],
+            "powers": [
+                { "label": "Sức mạnh", "value": 55 },
+                { "label": "Phòng thủ", "value": 60 },
+                { "label": "Tốc độ", "value": 88 },
+                { "label": "Năng lượng", "value": 84 },
+                { "label": "Kỹ năng", "value": 80 }
+            ],
+            "bio": "Đang cập nhật.",
+            "note": "Đang cập nhật."
+        },
+        "Untitled_Artwork 17.webp": {
+            "name": "Nhân vật #17",
+            "tagline": "Đang cập nhật",
+            "class": "Đang cập nhật",
+            "deck": "STRATEGY",
+            "stats": [
+                { "icon": "♂️", "label": "Giới tính", "value": "—" },
+                { "icon": "🎂", "label": "Tuổi", "value": "—" },
+                { "icon": "📏", "label": "Chiều cao", "value": "—" }
+            ],
+            "powers": [
+                { "label": "Sức mạnh", "value": 78 },
+                { "label": "Phòng thủ", "value": 70 },
+                { "label": "Tốc độ", "value": 72 },
+                { "label": "Năng lượng", "value": 88 },
+                { "label": "Kỹ năng", "value": 86 }
+            ],
+            "bio": "Đang cập nhật.",
+            "note": "Đang cập nhật."
+        },
+        "Untitled_Artwork 18.webp": {
+            "name": "Nhân vật #18",
+            "tagline": "Đang cập nhật",
+            "class": "Đang cập nhật",
+            "deck": "EQUIPMENT",
+            "stats": [
+                { "icon": "♂️", "label": "Giới tính", "value": "—" },
+                { "icon": "🎂", "label": "Tuổi", "value": "—" },
+                { "icon": "📏", "label": "Chiều cao", "value": "—" }
+            ],
+            "powers": [
+                { "label": "Sức mạnh", "value": 86 },
+                { "label": "Phòng thủ", "value": 84 },
+                { "label": "Tốc độ", "value": 48 },
+                { "label": "Năng lượng", "value": 64 },
+                { "label": "Kỹ năng", "value": 58 }
+            ],
+            "bio": "Đang cập nhật.",
+            "note": "Đang cập nhật."
+        },
+        "Untitled_Artwork 19.webp": {
+            "name": "Nhân vật #19",
+            "tagline": "Đang cập nhật",
+            "class": "Đang cập nhật",
+            "deck": "GROW",
+            "stats": [
+                { "icon": "♂️", "label": "Giới tính", "value": "—" },
+                { "icon": "🎂", "label": "Tuổi", "value": "—" },
+                { "icon": "📏", "label": "Chiều cao", "value": "—" }
+            ],
+            "powers": [
+                { "label": "Sức mạnh", "value": 64 },
+                { "label": "Phòng thủ", "value": 56 },
+                { "label": "Tốc độ", "value": 82 },
+                { "label": "Năng lượng", "value": 78 },
+                { "label": "Kỹ năng", "value": 74 }
+            ],
+            "bio": "Đang cập nhật.",
+            "note": "Đang cập nhật."
+        },
+        "Untitled_Artwork 20.webp": {
+            "name": "Nhân vật #20",
+            "tagline": "Đang cập nhật",
+            "class": "Đang cập nhật",
+            "deck": "HERO",
+            "stats": [
+                { "icon": "♂️", "label": "Giới tính", "value": "—" },
+                { "icon": "🎂", "label": "Tuổi", "value": "—" },
+                { "icon": "📏", "label": "Chiều cao", "value": "—" }
+            ],
+            "powers": [
+                { "label": "Sức mạnh", "value": 82 },
+                { "label": "Phòng thủ", "value": 76 },
+                { "label": "Tốc độ", "value": 66 },
+                { "label": "Năng lượng", "value": 72 },
+                { "label": "Kỹ năng", "value": 68 }
+            ],
+            "bio": "Đang cập nhật.",
+            "note": "Đang cập nhật."
         }
     }
 }

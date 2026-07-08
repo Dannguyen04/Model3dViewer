@@ -56,4 +56,29 @@
     /* --- Typography (tham khảo style quychien.com) --- */
     --font-display: "Anton", "Arial Narrow", sans-serif; /* tiêu đề logo game */
     --font-body: "Inter", system-ui, -apple-system, sans-serif;
+
+    /* =====================================================================
+       DESIGN TOKENS — thang giá trị nhất quán cho spacing / bo góc / icon /
+       đường kẻ / đổ bóng. Dùng ở layout mới để đồng bộ, hết hard-code lệch.
+       ===================================================================== */
+    --sp-1: 4px;
+    --sp-2: 8px;
+    --sp-3: 12px;
+    --sp-4: 16px;
+    --sp-5: 24px;
+    --sp-6: 32px;
+    --sp-7: 48px;
+
+    --r-sm: 8px;
+    --r-md: 12px;
+    --r-lg: 18px;
+    --r-pill: 999px;
+
+    --ico-sm: 16px;
+    --ico-md: 20px;
+    --ico-lg: 24px;
+
+    --hair: rgba(255, 255, 255, 0.1); /* đường kẻ mảnh nhất quán */
+    --shadow-1: 0 4px 16px rgba(0, 0, 0, 0.35);
+    --shadow-2: 0 12px 40px rgba(0, 0, 0, 0.5);
 }

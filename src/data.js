@@ -11,11 +11,18 @@ const img = (name) => encodeURI(`/character_image/${name}`);
 export const TBD = "Đang cập nhật";
 
 const placeholderStats = [
-    { icon: "❔", label: "Giới tính", value: TBD },
-    { icon: "❔", label: "Tuổi",      value: TBD },
-    { icon: "❔", label: "Chiều cao", value: TBD },
-    { icon: "❔", label: "Tóc",       value: TBD },
-    { icon: "❔", label: "Mắt",       value: TBD },
+    { icon: "♂️", label: "Giới tính", value: TBD },
+    { icon: "🎂", label: "Tuổi",      value: TBD },
+    { icon: "📏", label: "Chiều cao", value: TBD },
+];
+
+// 5 chỉ số chiến đấu (thang 0–100) — hiển thị dạng thanh bar.
+const placeholderPowers = [
+    { label: "Sức mạnh",   value: 0 },
+    { label: "Phòng thủ",  value: 0 },
+    { label: "Tốc độ",     value: 0 },
+    { label: "Năng lượng", value: 0 },
+    { label: "Kỹ năng",    value: 0 },
 ];
 
 export const DECKS = raw.decks;
@@ -32,15 +39,17 @@ export const CHARACTERS = IMAGE_FILES.map((file, i) => {
     const deck = p?.deck ?? DECK_ORDER[i % DECK_ORDER.length];
     return {
         id: `c${i}`,
-        name:    p?.name    ?? `Nhân vật #${String(i + 1).padStart(2, "0")}`,
+        name: p?.name ?? `Nhân vật #${String(i + 1).padStart(2, "0")}`,
         tagline: p?.tagline ?? TBD,
-        image:   img(file),
-        model:   raw.models[file],
-        scale:   0.5,
+        charClass: p?.class ?? TBD,
+        image: img(file),
+        model: raw.models[file],
+        scale: 0.5,
         deck,
         accent: DECKS[deck],
         stats: p?.stats ?? placeholderStats,
-        bio:  p?.bio  ?? "Thông tin nhân vật này đang được cập nhật.",
+        powers: p?.powers ?? placeholderPowers,
+        bio: p?.bio ?? "Thông tin nhân vật này đang được cập nhật.",
         note: p?.note ?? "Hồ sơ sẽ sớm được công bố.",
     };
 });
@@ -48,7 +57,7 @@ export const CHARACTERS = IMAGE_FILES.map((file, i) => {
 export const MODEL_URLS = CHARACTERS.filter((c) => c.model).map((c) => c.model);
 
 export const accentVars = (c) => ({
-    "--accent":       c.accent.main,
+    "--accent": c.accent.main,
     "--accent-light": c.accent.light,
-    "--accent-dark":  c.accent.dark,
+    "--accent-dark": c.accent.dark,
 });
