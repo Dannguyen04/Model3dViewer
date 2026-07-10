@@ -439,18 +439,13 @@ function ShowcasePage({ characters, onSelect }) {
 
     return (
         <div className="showcase">
-            <div className="showcase-logo">
-                <img src="/logo.png" alt="Logo" />
-            </div>
             <header className="showcase-head">
-                <div className="showcase-brand">
-                    <p className="showcase-sub">CHARACTER SHOWCASE</p>
-                    <h1 className="showcase-title">Bộ Sưu Tập Nhân Vật</h1>
-                </div>
-                <span className="showcase-count">
-                    {filtered.length}
-                    <em>/{characters.length}</em> nhân vật
-                </span>
+                <img
+                    className="showcase-logo"
+                    src="/logo.png"
+                    alt="Hero Collector"
+                />
+                <h1 className="showcase-title">Bộ Sưu Tập Nhân Vật</h1>
             </header>
 
             <div className="showcase-controls">
@@ -471,16 +466,27 @@ function ShowcasePage({ characters, onSelect }) {
                     ))}
                 </div>
 
-                <div className="search-box">
-                    <Search className="search-ico" size={16} strokeWidth={2} />
-                    <input
-                        ref={searchRef}
-                        type="search"
-                        className="search-input"
-                        placeholder="Tìm nhân vật..."
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                    />
+                <div className="showcase-tools">
+                    <span className="showcase-count">
+                        {filtered.length}
+                        <em>/{characters.length}</em> nhân vật
+                    </span>
+
+                    <div className="search-box">
+                        <Search
+                            className="search-ico"
+                            size={16}
+                            strokeWidth={2}
+                        />
+                        <input
+                            ref={searchRef}
+                            type="search"
+                            className="search-input"
+                            placeholder="Tìm nhân vật..."
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                        />
+                    </div>
                 </div>
             </div>
 
