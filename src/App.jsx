@@ -439,6 +439,9 @@ function ShowcasePage({ characters, onSelect }) {
 
     return (
         <div className="showcase">
+            <div className="showcase-logo">
+                <img src="/logo.png" alt="Logo" />
+            </div>
             <header className="showcase-head">
                 <div className="showcase-brand">
                     <p className="showcase-sub">CHARACTER SHOWCASE</p>
