@@ -24,6 +24,7 @@ npm run build     # build production vào dist/
 npm run preview   # xem thử bản build
 npm run lint      # kiểm tra ESLint
 npm run format    # định dạng bằng Prettier
+npm run build-qrcode  # tạo ảnh QR code cho trang chủ và từng nhân vật
 ```
 
 > WebXR (kể cả trên điện thoại thật) **bắt buộc HTTPS**. Dev server dùng
@@ -43,7 +44,40 @@ src/
 public/
   *.glb                 # Mô hình 3D
   character_image/*.webp # Ảnh 2D nhân vật
+  qrcodes/*.png          # QR code (tạo bằng build-qrcode)
 ```
+
+## Tạo QR code (`build-qrcode`)
+
+Script [`scripts/create-qrcode.js`](scripts/create-qrcode.js) sinh ảnh QR trỏ tới
+bản deploy production, dùng để in hoặc dán lên thẻ vật lý.
+
+### Chạy script
+
+```bash
+npm run build-qrcode
+```
+
+Ảnh PNG được ghi vào `public/qrcodes/` (500×500 px, margin 2).
+
+### File sinh ra
+
+| File | URL mã hóa |
+|------|------------|
+| `home.png` | Trang chủ — `https://modelgameviewer.vercel.app/` |
+| `c0.png` … `cN.png` | Hồ sơ nhân vật — `https://modelgameviewer.vercel.app/#/c/c{i}` |
+
+Số lượng `c*.png` lấy từ `characterCount` trong [`src/data.json`](src/data.json)
+(hiện tại: 20 file, `c0`–`c19`).
+
+### Khi nào cần chạy lại
+
+- Thêm hoặc bớt nhân vật → cập nhật `characterCount` trong `data.json`, rồi chạy lại.
+- Đổi domain deploy → sửa hằng `BASE_URL` trong `scripts/create-qrcode.js`,
+  rồi chạy lại để QR trỏ đúng URL mới.
+
+> Script **không** chạy tự động khi `npm run build`. Chạy thủ công khi cần cập
+> nhật QR.
 
 ## Thêm nội dung
 
