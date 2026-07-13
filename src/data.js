@@ -16,13 +16,13 @@ const placeholderStats = [
     { icon: "📏", label: "Chiều cao", value: TBD },
 ];
 
-// 5 chỉ số chiến đấu (thang 0–100) — hiển thị dạng thanh bar.
+// 5 chỉ số chiến đấu (thang 0–10) — hiển thị dạng thanh bar.
 const placeholderPowers = [
-    { label: "Sức mạnh",   value: 0 },
-    { label: "Phòng thủ",  value: 0 },
-    { label: "Tốc độ",     value: 0 },
-    { label: "Năng lượng", value: 0 },
-    { label: "Kỹ năng",    value: 0 },
+    { label: "VIT", value: 0 },
+    { label: "CTR", value: 0 },
+    { label: "STR", value: 0 },
+    { label: "INT", value: 0 },
+    { label: "LUK", value: 0 },
 ];
 
 export const DECKS = raw.decks;

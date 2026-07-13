@@ -32,11 +32,12 @@ import {
     Ruler,
     Tag,
     Lightbulb,
+    Heart,
+    Crosshair,
     Sword,
-    Shield,
+    Brain,
+    Clover,
     Zap,
-    BatteryFull,
-    Sparkles,
     ScanLine,
     ChevronDown,
     ArrowLeft,
@@ -52,11 +53,11 @@ import { useHashRoute } from "./useHashRoute.js";
 // Ánh xạ nhãn -> icon lucide (đồng bộ, đổi màu theo accent qua currentColor).
 const STAT_ICON = { "Giới tính": User, Tuổi: Calendar, "Chiều cao": Ruler };
 const POWER_ICON = {
-    "Sức mạnh": Sword,
-    "Phòng thủ": Shield,
-    "Tốc độ": Zap,
-    "Năng lượng": BatteryFull,
-    "Kỹ năng": Sparkles,
+    VIT: Heart,
+    CTR: Crosshair,
+    STR: Sword,
+    INT: Brain,
+    LUK: Clover,
 };
 
 // v6: store được tạo 1 lần ở module scope, không nằm trong component.
@@ -387,7 +388,11 @@ function CharacterCard({ character, onSelect, index }) {
 
                 <div className="tcard-info">
                     <h2 className="tcard-name">{character.name}</h2>
-                    <p className="tcard-tag">{character.tagline}</p>
+                    {/* Tagline mặc định lấy từ Class -> chỉ hiện khi thật sự
+                        khác Class, tránh in trùng chữ ngay trên chip bên dưới. */}
+                    {character.tagline !== character.charClass && (
+                        <p className="tcard-tag">{character.tagline}</p>
+                    )}
                     {character.charClass && character.charClass !== TBD && (
                         <span className="tcard-class">
                             <Tag size={11} strokeWidth={2} />
@@ -550,8 +555,11 @@ function StatList({ stats, variant = "info" }) {
     );
 }
 
-// 5 chỉ số chiến đấu dạng thanh bar (thang 0–100).
+// 5 chỉ số chiến đấu (VIT/CTR/STR/INT/LUK) dạng thanh bar, thang 0–POWER_MAX.
+const POWER_MAX = 10;
+
 function PowerBars({ powers, variant = "info", showTitle = true }) {
+    const total = powers.reduce((sum, p) => sum + p.value, 0);
     return (
         <div
             className={`power-bars${variant === "v3d" ? " power-bars--v3d" : ""}`}
@@ -559,6 +567,10 @@ function PowerBars({ powers, variant = "info", showTitle = true }) {
             {showTitle && <span className="power-title">Chỉ số</span>}
             {powers.map((p) => {
                 const Ico = POWER_ICON[p.label] || Zap;
+                const pct = Math.max(
+                    0,
+                    Math.min(100, (p.value / POWER_MAX) * 100),
+                );
                 return (
                     <div className="power-row" key={p.label}>
                         <span className="power-label">
@@ -572,15 +584,20 @@ function PowerBars({ powers, variant = "info", showTitle = true }) {
                         <span className="power-track">
                             <span
                                 className="power-fill"
-                                style={{
-                                    width: `${Math.max(0, Math.min(100, p.value))}%`,
-                                }}
+                                style={{ width: `${pct}%` }}
                             />
                         </span>
                         <span className="power-num">{p.value}</span>
                     </div>
                 );
             })}
+            <div className="power-total">
+                <span className="power-total-k">Total</span>
+                <span className="power-total-v">
+                    {total}
+                    <em>/{powers.length * POWER_MAX}</em>
+                </span>
+            </div>
         </div>
     );
 }
@@ -684,10 +701,31 @@ function FactModal({ title, label = "Fact", children, onClose }) {
     );
 }
 
+// Tiểu sử là khối duy nhất co được nên nó có thể bị cắt bớt để hồ sơ vừa 1 màn
+// hình. Đo trực tiếp DOM (thay vì đoán theo độ dài chuỗi) để chỉ báo "Xem thêm"
+// + làm mờ đáy khi CHỮ THẬT SỰ bị cắt — cùng một tiểu sử có thể vừa đủ trên màn
+// hình cao mà lại tràn trên màn hình thấp.
+function useIsTruncated(ref, deps) {
+    const [truncated, setTruncated] = useState(false);
+    useEffect(() => {
+        const el = ref.current;
+        if (!el) return;
+        const check = () => setTruncated(el.scrollHeight - el.clientHeight > 2);
+        check();
+        const ro = new ResizeObserver(check);
+        ro.observe(el);
+        return () => ro.disconnect();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, deps);
+    return truncated;
+}
+
 function InfoPage({ character, onView3D, onBack }) {
     // Vào hồ sơ -> preload model để bấm "3D View" mở tức thì.
     useEffect(() => preloadModel(character.model), [character.model]);
-    const [factOpen, setFactOpen] = useState(false);
+    const [modal, setModal] = useState(null); // "bio" | "fact" | null
+    const bioRef = useRef(null);
+    const bioLong = useIsTruncated(bioRef, [character.bio]);
 
     // Gom Class + Giới tính/Tuổi/Chiều cao thành 1 "spec grid" gọn, dễ quét mắt.
     const specs = [
@@ -753,22 +791,47 @@ function InfoPage({ character, onView3D, onBack }) {
 
                 <PowerBars powers={character.powers} />
 
-                <div className="bio-card">
-                    <span className="bio-label">Tiểu sử</span>
-                    <p>{character.bio}</p>
+                <div
+                    className={`bio-card${bioLong ? " is-truncated" : ""}`}
+                    role={bioLong ? "button" : undefined}
+                    tabIndex={bioLong ? 0 : undefined}
+                    onClick={bioLong ? () => setModal("bio") : undefined}
+                    onKeyDown={
+                        bioLong
+                            ? (e) => {
+                                  if (e.key !== "Enter" && e.key !== " ") return;
+                                  e.preventDefault();
+                                  setModal("bio");
+                              }
+                            : undefined
+                    }
+                >
+                    {/* "Xem thêm" nằm cùng hàng nhãn: không bị cắt khi thẻ co lại
+                        trên màn hình thấp, và tiết kiệm một dòng chiều cao. */}
+                    <div className="bio-head">
+                        <span className="bio-label">Tiểu sử</span>
+                        {bioLong && (
+                            <span className="bio-more">
+                                Xem thêm
+                                <ArrowRight size={13} strokeWidth={2.5} />
+                            </span>
+                        )}
+                    </div>
+                    <p ref={bioRef}>{character.bio}</p>
                 </div>
 
-                <NoteCallout onClick={() => setFactOpen(true)}>
+                <NoteCallout onClick={() => setModal("fact")}>
                     {character.note}
                 </NoteCallout>
             </div>
 
-            {factOpen && (
+            {modal && (
                 <FactModal
                     title={character.name}
-                    onClose={() => setFactOpen(false)}
+                    label={modal === "bio" ? "Tiểu sử" : "Fact"}
+                    onClose={() => setModal(null)}
                 >
-                    {character.note}
+                    {modal === "bio" ? character.bio : character.note}
                 </FactModal>
             )}
         </div>
@@ -885,7 +948,9 @@ function View3DPage({ character, onBack }) {
                 </button>
 
                 <h2 className="v3d-name">{character.name}</h2>
-                <p className="v3d-tag">{character.tagline}</p>
+                {character.tagline !== character.charClass && (
+                    <p className="v3d-tag">{character.tagline}</p>
+                )}
                 <span className="char-class char-class--v3d">
                     <Tag className="char-class-ico" size={13} strokeWidth={2} />
                     {character.charClass}

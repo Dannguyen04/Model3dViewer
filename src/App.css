@@ -42,9 +42,11 @@ body,
     background: var(--bg-black);
     display: grid;
     grid-template-columns: 1fr 1fr;
-    align-items: center;
+    /* stretch -> panel cao đúng bằng khung, làm mốc để thẻ Tiểu sử co lại vừa khít. */
+    align-items: stretch;
     gap: 24px;
-    padding: 4vh 5vw;
+    /* Nhịp dọc bám viewport -> toàn bộ hồ sơ gói gọn trong 1 màn hình, không cuộn. */
+    padding: 3vh 4vw;
     overflow: hidden;
     animation: pageFade 0.5s ease both;
 }
@@ -113,14 +115,19 @@ body,
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 22px;
+    gap: clamp(7px, 1.3vh, 20px);
     max-width: 560px;
+    height: 100%;
+    min-height: 0;
     color: #fff;
 }
 
 /* Reveal so le từng khối: tên → thông số → tiểu sử → ghi chú → nút */
+/* flex-shrink: 0 -> mọi khối giữ nguyên kích thước; chỉ .bio-card (bên dưới) được
+   phép co lại, nên nó "nuốt" hết phần thiếu chỗ và hồ sơ luôn vừa 1 màn hình. */
 .info-panel > * {
     opacity: 0;
+    flex-shrink: 0;
     animation: revealUp 0.6s ease forwards;
 }
 .info-panel > *:nth-child(1) {
@@ -146,7 +153,7 @@ body,
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
+    gap: clamp(6px, 1vh, 12px);
 }
 
 .char-deck {
@@ -163,13 +170,13 @@ body,
 
 .char-name {
     font-family: var(--font-display);
-    font-size: clamp(44px, 6vw, 84px);
+    font-size: clamp(30px, 2.8vw + 1vh, 60px);
     font-weight: 400;
     line-height: 0.95;
     letter-spacing: 1px;
     font-style: italic;
-    padding-bottom: 14px;
-    border-bottom: 4px solid var(--accent);
+    padding-bottom: clamp(6px, 1vh, 12px);
+    border-bottom: 3px solid var(--accent);
     text-transform: uppercase;
     text-shadow: 0 4px 24px color-mix(in srgb, var(--accent) 55%, transparent);
 }
@@ -253,13 +260,28 @@ body,
 
 /* Khối tiểu sử */
 .bio-card {
+    display: flex;
+    flex-direction: column;
+    /* Khối duy nhất được co: hấp thụ phần thiếu chỗ khi màn hình thấp. */
+    flex: 0 1 auto;
+    min-height: 0;
+    overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 16px;
-    padding: 18px 20px;
+    padding: clamp(12px, 1.7vh, 18px) 20px;
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(12px) saturate(1.2);
     -webkit-backdrop-filter: blur(12px) saturate(1.2);
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+.bio-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-shrink: 0;
+    margin-bottom: 6px;
 }
 
 .bio-label {
@@ -268,13 +290,49 @@ body,
     letter-spacing: 1px;
     text-transform: uppercase;
     color: var(--accent-light);
-    margin-bottom: 8px;
 }
 
 .bio-card p {
+    flex: 0 1 auto;
+    /* Trần 5 dòng: tiểu sử dài không chiếm hết panel. Màn hình thấp thì flex co
+       thêm; thiếu bao nhiêu chữ cũng đọc đủ được trong popup "Xem thêm". */
+    max-height: 7.75em;
+    overflow: hidden;
     font-size: 15px;
-    line-height: 1.6;
+    line-height: 1.55;
     color: #d8d8d8;
+}
+
+/* Chỉ khi chữ THẬT SỰ bị cắt (đo bằng JS) mới bật vệt mờ đáy + bấm mở popup. */
+.bio-card.is-truncated {
+    cursor: pointer;
+    transition:
+        transform 0.15s ease,
+        background 0.15s ease,
+        border-color 0.15s ease;
+}
+.bio-card.is-truncated:hover,
+.bio-card.is-truncated:focus-visible {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+.bio-card.is-truncated p {
+    -webkit-mask-image: linear-gradient(180deg, #000 72%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 72%, transparent 100%);
+}
+
+.bio-more {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 4px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent-light);
 }
 
 /* Ghi chú ngôn ngữ ký hiệu — điểm nhấn */
@@ -282,8 +340,7 @@ body,
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    margin-block-end: 10%;
-    padding: 14px 18px;
+    padding: clamp(10px, 1.4vh, 14px) 18px;
     border: 1px solid var(--accent);
     border-radius: 14px;
     background: color-mix(in srgb, var(--accent) 15%, transparent);
@@ -307,6 +364,12 @@ body,
     font-size: 15px;
     line-height: 1.5;
     color: #eafaf4;
+    /* Fact dài không được đẩy hồ sơ tràn màn hình — bấm để xem đủ trong popup. */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
 }
 
 .note-body {
@@ -371,8 +434,8 @@ body,
 .power-bars {
     display: flex;
     flex-direction: column;
-    gap: 9px;
-    padding: 16px 18px;
+    gap: clamp(4px, 0.85vh, 9px);
+    padding: clamp(9px, 1.3vh, 16px) 18px;
     border-radius: 14px;
     border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
     background: color-mix(in srgb, var(--accent) 10%, rgba(0, 0, 0, 0.25));
@@ -387,7 +450,7 @@ body,
     letter-spacing: 2px;
     font-size: 13px;
     color: var(--accent-light);
-    margin-bottom: 2px;
+    margin-bottom: 0;
 }
 
 .power-row {
@@ -447,6 +510,35 @@ body,
     color: #fff;
 }
 
+.power-total {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-top: 3px;
+    padding-top: 9px;
+    border-top: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+.power-total-k {
+    font-family: var(--font-display);
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-size: 12px;
+    color: var(--accent-light);
+}
+
+.power-total-v {
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: #fff;
+}
+.power-total-v em {
+    font-style: normal;
+    font-size: 12px;
+    opacity: 0.6;
+}
+
 /* Thu gọn cho panel trang 3D */
 .power-bars--v3d {
     padding: 12px 14px;
@@ -457,6 +549,9 @@ body,
 }
 .power-bars--v3d .power-label {
     font-size: 12px;
+}
+.power-bars--v3d .power-total-v {
+    font-size: 16px;
 }
 
 /* --- FACT bấm được (affordance rõ ràng: có gợi ý "Xem thêm") --- */
@@ -1385,7 +1480,7 @@ body,
     align-items: center;
     gap: var(--sp-3);
     min-width: 0;
-    padding: var(--sp-3);
+    padding: clamp(8px, 1.1vh, 12px) var(--sp-3);
     border: 1px solid var(--hair);
     border-radius: var(--r-md);
     background: rgba(255, 255, 255, 0.03);
@@ -1394,8 +1489,8 @@ body,
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 34px;
-    height: 34px;
+    width: clamp(28px, 3.6vh, 34px);
+    height: clamp(28px, 3.6vh, 34px);
     flex-shrink: 0;
     border-radius: var(--r-sm);
     background: color-mix(in srgb, var(--accent) 16%, transparent);
@@ -1696,6 +1791,33 @@ body,
 /* =========================================================================
    MÀN HÌNH HẸP (mobile) — đặt ở CUỐI file để mọi override thắng theo thứ tự nguồn.
    ========================================================================= */
+/* Laptop màn thấp (1366×768, 1280×700...): nén thêm nhịp dọc để tiểu sử vẫn còn
+   đủ vài dòng đọc được thay vì bị flex bóp gần hết. */
+@media (min-width: 821px) and (max-height: 800px) {
+    .power-title {
+        display: none;
+    }
+    .power-total {
+        margin-top: 0;
+        padding-top: 6px;
+    }
+    .power-row {
+        gap: 8px;
+    }
+    .view3d-btn {
+        margin-top: 0;
+        padding: 11px 26px;
+    }
+    .spec-cell {
+        padding: 7px var(--sp-3);
+    }
+    /* Fact rút còn 1 dòng — nội dung đủ vẫn xem được trong popup. */
+    .note-callout p {
+        -webkit-line-clamp: 1;
+        line-clamp: 1;
+    }
+}
+
 @media (max-width: 820px) {
     /* --- Showcase mobile: hero gọn lại, filter vuốt ngang, lưới dày hơn. --- */
     .showcase-logo {
@@ -1790,8 +1912,10 @@ body,
     .info-watermark {
         font-size: 72px;
     }
+    /* Mobile xếp dọc và cho cuộn -> panel cao tự nhiên, không ép vừa 1 màn hình. */
     .info-panel {
         max-width: 100%;
+        height: auto;
     }
     .char-name {
         font-size: clamp(32px, 12vw, 52px);
