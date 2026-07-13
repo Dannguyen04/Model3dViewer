@@ -511,6 +511,8 @@ function ShowcasePage({ characters, onSelect }) {
                     ))}
                 </div>
             )}
+
+            <QrCodeSection src="/qrcodes/home.png" alt="QR trang chủ" />
         </div>
     );
 }
@@ -664,6 +666,14 @@ function NoteCallout({ children, label = "Fact", onClick }) {
     );
 }
 
+function QrCodeSection({ src, alt }) {
+    return (
+        <div className="qr-section">
+            <img className="qr-image" src={src} alt={alt} loading="lazy" />
+        </div>
+    );
+}
+
 // Popup nhỏ hiển thị chi tiết Fact — làm rõ đây là điểm chạm tương tác,
 // không phải nút "chết".
 function FactModal({ title, label = "Fact", children, onClose }) {
@@ -755,7 +765,15 @@ function InfoPage({ character, onView3D, onBack }) {
             <div className="info-panel">
                 <div className="info-head">
                     <span className="char-deck">{character.deck} DECK</span>
-                    <h1 className="char-name">{character.name}</h1>
+                    <div className="info-head-row">
+                        <h1 className="char-name">{character.name}</h1>
+                        <img
+                            className="info-qr"
+                            src={`/qrcodes/${character.id}.png`}
+                            alt={`QR ${character.name}`}
+                            loading="lazy"
+                        />
+                    </div>
                 </div>
 
                 {/* CTA ngay dưới tiêu đề (desktop) / ghim đáy màn hình (mobile)
