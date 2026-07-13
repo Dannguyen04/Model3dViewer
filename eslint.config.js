@@ -6,6 +6,11 @@ import reactRefresh from "eslint-plugin-react-refresh";
 
 export default [
     { ignores: ["dist", "node_modules"] },
+    // scripts/ chạy bằng Node (build-time), không phải trong trình duyệt.
+    {
+        files: ["scripts/**/*.js"],
+        languageOptions: { globals: { ...globals.node } },
+    },
     {
         files: ["**/*.{js,jsx}"],
         languageOptions: {

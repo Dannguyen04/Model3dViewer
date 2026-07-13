@@ -10,7 +10,11 @@
         "preview": "vite preview --host",
         "lint": "eslint .",
         "format": "prettier --write \"**/*.{js,jsx,css,html,json,md}\"",
-        "build-qrcode": "node scripts/create-qrcode.js"
+        "build-qrcode": "node scripts/create-qrcode.js",
+        "optimize-models": "node scripts/optimize-models.js"
+    },
+    "overrides": {
+        "sharp": "$sharp"
     },
     "dependencies": {
         "@react-three/drei": "^10.7.7",
@@ -24,13 +28,18 @@
     },
     "devDependencies": {
         "@eslint/js": "^9.17.0",
+        "@gltf-transform/core": "^4.4.1",
+        "@gltf-transform/extensions": "^4.4.1",
+        "@gltf-transform/functions": "^4.4.1",
         "@vitejs/plugin-basic-ssl": "^2.3.0",
         "@vitejs/plugin-react": "^5.2.0",
+        "draco3d": "^1.5.7",
         "eslint": "^9.17.0",
         "eslint-plugin-react": "^7.37.3",
         "eslint-plugin-react-hooks": "^5.1.0",
         "eslint-plugin-react-refresh": "^0.4.16",
         "globals": "^15.14.0",
+        "meshoptimizer": "^1.2.0",
         "prettier": "^3.4.2",
         "sharp": "^0.35.3",
         "vite": "^7.3.6"

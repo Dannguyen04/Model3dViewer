@@ -46,7 +46,7 @@ import {
     Search,
     Box,
 } from "lucide-react";
-import { CHARACTERS, MODEL_URLS, accentVars, TBD } from "./data.js";
+import { CHARACTERS, accentVars, TBD } from "./data.js";
 import ModelErrorBoundary from "./ErrorBoundary.jsx";
 import { useHashRoute } from "./useHashRoute.js";
 
@@ -64,19 +64,47 @@ const POWER_ICON = {
 // emulate:false -> tắt IWER emulator (nút "Enter XR" tự chèn khi chạy localhost).
 const store = createXRStore({ emulate: false });
 
-// Preload lười: KHÔNG tải toàn bộ ~35MB khi mở trang. Chỉ preload 1 model khi
-// người dùng có ý định xem (hover thẻ / vào hồ sơ), và preload phần còn lại khi
-// trình duyệt rảnh.
-const preloaded = new Set();
+// Preload CÓ CHỦ ĐÍCH: chỉ tải model khi người dùng tỏ ý muốn xem (rê chuột vào
+// thẻ / mở hồ sơ). KHÔNG preload cả bộ 20 model — đó là hàng chục MB tải ngầm
+// mà đại đa số người xem không bao giờ dùng tới, lại tranh băng thông với ảnh
+// thẻ bài đang hiện trên màn hình.
+// Mỗi model đã tải chiếm VRAM (lưới + texture 2048). Xem lần lượt 20 nhân vật mà
+// không giải phóng thì trình duyệt trên điện thoại sẽ hết bộ nhớ và kill tab.
+// Giữ MAX_CACHED model gần nhất (LRU), model cũ hơn thì xả cả cache lẫn GPU.
+const MAX_CACHED = 3;
+const lru = []; // url, cũ -> mới
+const scenes = new Map(); // url -> gltf.scene, do ProductModel đăng ký khi tải xong
+
 function preloadModel(url) {
-    if (!url || preloaded.has(url)) return;
-    preloaded.add(url);
-    useGLTF.preload(url);
+    if (!url) return;
+    const isNew = !lru.includes(url);
+    touchModel(url);
+    if (isNew) useGLTF.preload(url);
 }
-if (typeof window !== "undefined" && "requestIdleCallback" in window) {
-    window.requestIdleCallback(() => MODEL_URLS.forEach(preloadModel), {
-        timeout: 4000,
+
+function touchModel(url) {
+    const i = lru.indexOf(url);
+    if (i !== -1) lru.splice(i, 1);
+    lru.push(url); // url vừa dùng luôn ở cuối -> không bao giờ tự xả chính nó
+    while (lru.length > MAX_CACHED) disposeModel(lru.shift());
+}
+
+// useGLTF.clear() chỉ xoá khỏi cache của React — buffer trên GPU vẫn sống tới khi
+// gọi dispose() thủ công.
+function disposeModel(url) {
+    const scene = scenes.get(url);
+    scene?.traverse((o) => {
+        o.geometry?.dispose?.();
+        for (const mat of [o.material].flat()) {
+            if (!mat) continue;
+            for (const value of Object.values(mat)) {
+                if (value?.isTexture) value.dispose();
+            }
+            mat.dispose?.();
+        }
     });
+    scenes.delete(url);
+    useGLTF.clear(url);
 }
 
 // ---------------------------------------------------------------------------
@@ -86,6 +114,13 @@ function ProductModel({ url, position = [0, 0, 0], scale = 0.5 }) {
     const group = useRef();
     const { scene, animations } = useGLTF(url);
     const { actions } = useAnimations(animations, group);
+
+    // Ghi vào sổ LRU để disposeModel() còn biết đường xả GPU khi model bị đẩy ra
+    // khỏi cache.
+    useEffect(() => {
+        scenes.set(url, scene);
+        touchModel(url);
+    }, [url, scene]);
 
     // Phát clip animation đầu tiên (nếu model có) — idle/xoay/thở...
     useEffect(() => {
@@ -235,13 +270,28 @@ function CharacterViewer({
         <Canvas
             style={style}
             camera={{ position: [0, 0.3, 1.4], fov: 40 }}
-            gl={{ preserveDrawingBuffer: true, antialias: true }}
+            // Điện thoại đời mới có devicePixelRatio 3–4: render đúng tỉ lệ đó là
+            // vẽ gấp 9–16 lần số pixel cần thiết, tụt hẳn khung hình mà nhìn gần
+            // như không khác. Chặn trần ở 2 (Retina vẫn nét).
+            dpr={[1, 2]}
+            // preserveDrawingBuffer bắt trình duyệt giữ bản sao backbuffer sau MỖI
+            // khung hình — chỉ cần khi chụp ảnh, mà nút chụp đang tắt. Bật lại
+            // cùng lúc với nút chụp ở dưới nếu cần.
+            gl={{
+                antialias: true,
+                powerPreference: "high-performance",
+                preserveDrawingBuffer: false,
+            }}
             onCreated={({ gl, scene, camera }) => {
                 if (captureRef) captureRef.current = { gl, scene, camera };
             }}
         >
             <XR store={store}>
-                <Environment preset="city" />
+                {/* preset="city" của drei tải HDR từ raw.githack.com — CDN bên thứ
+                    ba, không có SLA. Nó nằm NGOÀI <Suspense> có <Loader/> bên dưới,
+                    nên githack chậm/chết là cả canvas treo, không có gì báo cho
+                    người dùng. Cùng file đó, tự host trong public/env/. */}
+                <Environment files="/env/potsdamer_platz_1k.hdr" />
                 <ambientLight intensity={0.5} />
                 <directionalLight position={[2, 4, 2]} intensity={1} />
 
@@ -299,7 +349,12 @@ function CharacterViewer({
                                         />
                                     </Center>
                                 </Bounds>
+                                {/* frames={1}: model đứng yên (autoRotate xoay
+                                    camera, không xoay model) nên bóng đổ không
+                                    bao giờ đổi -> render 1 lần rồi thôi, thay vì
+                                    vẽ lại depth map mỗi khung hình. */}
                                 <ContactShadows
+                                    frames={1}
                                     position={[0, 0, 0]}
                                     opacity={0.6}
                                     scale={2}
@@ -821,7 +876,8 @@ function InfoPage({ character, onView3D, onBack }) {
                     onKeyDown={
                         bioLong
                             ? (e) => {
-                                  if (e.key !== "Enter" && e.key !== " ") return;
+                                  if (e.key !== "Enter" && e.key !== " ")
+                                      return;
                                   e.preventDefault();
                                   setModal("bio");
                               }
