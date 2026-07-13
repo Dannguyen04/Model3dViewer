@@ -454,22 +454,26 @@ function ShowcasePage({ characters, onSelect }) {
             </header>
 
             <div className="showcase-controls">
-                <div className="deck-tabs">
-                    {decks.map((d) => (
-                        <button
-                            key={d}
-                            className={`deck-tab${d === deck ? " active" : ""}`}
-                            style={
-                                d === "ALL"
-                                    ? undefined
-                                    : { "--tab": deckColor[d] }
-                            }
-                            onClick={() => setDeck(d)}
-                        >
-                            {d === "ALL" ? "TẤT CẢ" : d}
-                        </button>
-                    ))}
-                </div>
+                {/* Cả bộ hiện chỉ có deck HERO -> tab lọc chỉ còn "TẤT CẢ" + "HERO",
+                    không lọc được gì nên ẩn đi. Thêm deck khác là tab tự hiện lại. */}
+                {decks.length > 2 && (
+                    <div className="deck-tabs">
+                        {decks.map((d) => (
+                            <button
+                                key={d}
+                                className={`deck-tab${d === deck ? " active" : ""}`}
+                                style={
+                                    d === "ALL"
+                                        ? undefined
+                                        : { "--tab": deckColor[d] }
+                                }
+                                onClick={() => setDeck(d)}
+                            >
+                                {d === "ALL" ? "TẤT CẢ" : d}
+                            </button>
+                        ))}
+                    </div>
+                )}
 
                 <div className="showcase-tools">
                     <span className="showcase-count">
