@@ -17,6 +17,10 @@ const urls = [
         id: `c${i}`,
         url: `${BASE_URL}/#/c/c${i}`,
     })),
+    ...(raw.adventures ?? []).map((a) => ({
+        id: a.id,
+        url: `${BASE_URL}/#/c/${a.id}`,
+    })),
 ];
 
 for (const item of urls) {

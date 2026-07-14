@@ -108,6 +108,26 @@ body,
     animation: float 6s ease-in-out 0.7s infinite;
 }
 
+/* Adventure detail: ảnh thẻ bài portrait, không float như nhân vật */
+.info-image-wrap.is-card {
+    padding: clamp(8px, 2vw, 20px);
+}
+
+.info-image.is-card {
+    aspect-ratio: 350 / 490;
+    width: min(100%, clamp(220px, 30vw, 340px));
+    height: auto;
+    max-height: calc(100dvh - 96px);
+    object-fit: contain;
+    border-radius: 14px;
+    border: 3px solid var(--accent);
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.7),
+        0 0 0 1px color-mix(in srgb, var(--accent-light) 35%, transparent);
+    animation: none;
+    filter: drop-shadow(0 16px 32px rgba(0, 0, 0, 0.6));
+}
+
 /* Panel hồ sơ bên phải — vừa khít viewport, không cuộn */
 .info-panel {
     display: flex;
@@ -1995,6 +2015,11 @@ body,
     .info-image {
         max-height: min(26vh, 200px);
         max-width: 72%;
+    }
+    .info-image.is-card {
+        max-height: min(42vh, 320px);
+        max-width: min(58vw, 220px);
+        width: auto;
     }
     .info-watermark {
         font-size: 72px;
