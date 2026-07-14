@@ -1,5 +1,6 @@
 {
     "characterCount": 20,
+    "adventureCount": 1,
     "decks": {
         "GROW": {
             "main": "#1fa36b",
@@ -995,5 +996,56 @@
             "bio": "Dáng người gầy go đem lại cảm giác có thể ngất bất cứ lúc nào. Là một người lầm lỳ ít nói, luôn đem đến cảm giác tương đối bất an cho những người đồng hành với anh.",
             "note": "Đang cập nhật."
         }
-    }
+    },
+    "adventures": [
+        {
+            "id": "a1",
+            "card": "placeholder.svg",
+            "collection": "Thám hiểm 1",
+            "name": "Chất nhờn vô hại",
+            "class": "Sinh vật thù địch",
+            "deck": "ADVENTURE",
+            "stats": [
+                {
+                    "icon": "♂️",
+                    "label": "Giới tính",
+                    "value": "Vô tính"
+                },
+                {
+                    "icon": "⚖️",
+                    "label": "Cân nặng",
+                    "value": "3–6 kg"
+                },
+                {
+                    "icon": "📏",
+                    "label": "Chiều cao",
+                    "value": "5–8 cm"
+                }
+            ],
+            "powers": [
+                {
+                    "label": "VIT",
+                    "value": 1
+                },
+                {
+                    "label": "CTR",
+                    "value": 2
+                },
+                {
+                    "label": "STR",
+                    "value": 2
+                },
+                {
+                    "label": "INT",
+                    "value": 1
+                },
+                {
+                    "label": "LUK",
+                    "value": 2
+                }
+            ],
+            "bio": "Một dạng sinh vật đơn bào bị biến dị sau sự kiện Tái sáng thế. Cấu trúc cơ thể giống hoàn toàn với các dạng đơn bào với lớp nhầy bên ngoài và hạch tâm bên trong bảo vệ lớp ngoài. Tuy nhiên các nhà nghiên cứu của Quân Trinh Sát không thể hiểu được tại sao kích thước của nó lại lớn đến vậy. Lớp nhầy bên ngoài có tính ăn mòn cao có thể hoà tan các chất hữu cơ, đây cũng là cách tiêu thụ thực phẩm chính của Chất nhờn vô hại",
+            "note": ""
+        }
+    ]
 }
