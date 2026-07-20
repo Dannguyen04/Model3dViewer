@@ -108,6 +108,26 @@ body,
     animation: float 6s ease-in-out 0.7s infinite;
 }
 
+/* Hồ sơ không có ảnh (dữ liệu Thám hiểm): chữ cái đầu tên trong vòng tròn accent. */
+.info-image-placeholder {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: min(280px, 50vw);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--accent) 28%, transparent);
+    border: 3px solid color-mix(in srgb, var(--accent) 55%, transparent);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(48px, 8vw, 80px);
+    color: #fff;
+    filter: drop-shadow(0 0 40px color-mix(in srgb, var(--accent) 35%, transparent));
+    animation: float 6s ease-in-out 0.7s infinite;
+}
+
 /* Panel hồ sơ bên phải — vừa khít viewport, không cuộn */
 .info-panel {
     display: flex;
@@ -1073,6 +1093,22 @@ body,
 
 .tcard:hover .tcard-art img {
     transform: scale(1.06);
+}
+
+/* Thẻ không có ảnh (dữ liệu Thám hiểm): chữ cái đầu tên trong vòng tròn accent. */
+.tcard-noimg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 62%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--accent) 30%, transparent);
+    border: 2px solid color-mix(in srgb, var(--accent) 65%, transparent);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(28px, 5vw, 42px);
+    color: #fff;
 }
 
 /* Banner tên đáy thẻ */

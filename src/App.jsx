@@ -385,7 +385,8 @@ function CharacterViewer({
 // ---------------------------------------------------------------------------
 function CharacterCard({ character, onSelect, index }) {
     const innerRef = useRef(null);
-    const [loaded, setLoaded] = useState(false);
+    // Thẻ không có ảnh (dữ liệu Thám hiểm) -> không có gì để tải, bỏ qua skeleton.
+    const [loaded, setLoaded] = useState(!character.image);
 
     // Nghiêng thẻ theo vị trí con trỏ (parallax 3D). Ghi thẳng vào style để mượt,
     // không gây re-render.
@@ -432,13 +433,19 @@ function CharacterCard({ character, onSelect, index }) {
                 )}
 
                 <div className={`tcard-art${loaded ? " is-loaded" : ""}`}>
-                    <img
-                        src={character.image}
-                        alt={character.name}
-                        loading="lazy"
-                        fetchPriority={index === 0 ? "high" : "auto"}
-                        onLoad={() => setLoaded(true)}
-                    />
+                    {character.image ? (
+                        <img
+                            src={character.image}
+                            alt={character.name}
+                            loading="lazy"
+                            fetchPriority={index === 0 ? "high" : "auto"}
+                            onLoad={() => setLoaded(true)}
+                        />
+                    ) : (
+                        <span className="tcard-noimg" aria-hidden="true">
+                            {character.name.charAt(0)}
+                        </span>
+                    )}
                 </div>
 
                 <div className="tcard-info">
@@ -509,8 +516,8 @@ function ShowcasePage({ characters, onSelect }) {
             </header>
 
             <div className="showcase-controls">
-                {/* Cả bộ hiện chỉ có deck HERO -> tab lọc chỉ còn "TẤT CẢ" + "HERO",
-                    không lọc được gì nên ẩn đi. Thêm deck khác là tab tự hiện lại. */}
+                {/* Chỉ 1 deck -> tab lọc chỉ còn "TẤT CẢ" + deck đó, không lọc
+                    được gì nên ẩn đi. Từ 2 deck trở lên thì tab tự hiện. */}
                 {decks.length > 2 && (
                     <div className="deck-tabs">
                         {decks.map((d) => (
@@ -621,6 +628,12 @@ const POWER_MAX = 10;
 
 function PowerBars({ powers, variant = "info", showTitle = true }) {
     const total = powers.reduce((sum, p) => sum + p.value, 0);
+    // Hero dùng thang 0–10, sinh vật Thám hiểm có chỉ số tới 20–30 -> thang tự
+    // nới theo bội số 10 để bar không kịch trần và Total giữ đúng mẫu số.
+    const scale = Math.max(
+        POWER_MAX,
+        Math.ceil(Math.max(0, ...powers.map((p) => p.value)) / 10) * 10,
+    );
     return (
         <div
             className={`power-bars${variant === "v3d" ? " power-bars--v3d" : ""}`}
@@ -628,10 +641,7 @@ function PowerBars({ powers, variant = "info", showTitle = true }) {
             {showTitle && <span className="power-title">Chỉ số</span>}
             {powers.map((p) => {
                 const Ico = POWER_ICON[p.label] || Zap;
-                const pct = Math.max(
-                    0,
-                    Math.min(100, (p.value / POWER_MAX) * 100),
-                );
+                const pct = Math.max(0, Math.min(100, (p.value / scale) * 100));
                 return (
                     <div className="power-row" key={p.label}>
                         <span className="power-label">
@@ -656,7 +666,7 @@ function PowerBars({ powers, variant = "info", showTitle = true }) {
                 <span className="power-total-k">Total</span>
                 <span className="power-total-v">
                     {total}
-                    <em>/{powers.length * POWER_MAX}</em>
+                    <em>/{powers.length * scale}</em>
                 </span>
             </div>
         </div>
@@ -814,11 +824,17 @@ function InfoPage({ character, onView3D, onBack }) {
             </button>
 
             <div className="info-image-wrap">
-                <img
-                    className="info-image"
-                    src={character.image}
-                    alt={character.name}
-                />
+                {character.image ? (
+                    <img
+                        className="info-image"
+                        src={character.image}
+                        alt={character.name}
+                    />
+                ) : (
+                    <span className="info-image-placeholder" aria-hidden="true">
+                        {character.name.charAt(0)}
+                    </span>
+                )}
             </div>
 
             <div className="info-panel">
@@ -826,12 +842,14 @@ function InfoPage({ character, onView3D, onBack }) {
                     <span className="char-deck">{character.deck} DECK</span>
                     <div className="info-head-row">
                         <h1 className="char-name">{character.name}</h1>
-                        <img
-                            className="info-qr"
-                            src={`/qrcodes/${character.id}.png`}
-                            alt={`QR ${character.name}`}
-                            loading="lazy"
-                        />
+                        {character.hasQr && (
+                            <img
+                                className="info-qr"
+                                src={`/qrcodes/${character.id}.png`}
+                                alt={`QR ${character.name}`}
+                                loading="lazy"
+                            />
+                        )}
                     </div>
                 </div>
 
@@ -866,7 +884,10 @@ function InfoPage({ character, onView3D, onBack }) {
                     ))}
                 </div>
 
-                <PowerBars powers={character.powers} />
+                {/* Sự kiện/Lựa chọn không có chỉ số chiến đấu -> ẩn hẳn khối bar. */}
+                {character.powers.length > 0 && (
+                    <PowerBars powers={character.powers} />
+                )}
 
                 <div
                     className={`bio-card${bioLong ? " is-truncated" : ""}`}

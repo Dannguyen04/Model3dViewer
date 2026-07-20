@@ -34,7 +34,7 @@ const IMAGE_FILES = Array.from(
 );
 
 // Sinh danh sách nhân vật từ ảnh: có PROFILES thì dùng, không thì placeholder.
-export const CHARACTERS = IMAGE_FILES.map((file, i) => {
+const HERO_CHARACTERS = IMAGE_FILES.map((file, i) => {
     const p = raw.profiles[file];
     const deck = p?.deck ?? DECK_ORDER[i % DECK_ORDER.length];
     return {
@@ -43,6 +43,7 @@ export const CHARACTERS = IMAGE_FILES.map((file, i) => {
         tagline: p?.tagline ?? TBD,
         charClass: p?.class ?? TBD,
         image: img(file),
+        hasQr: true,
         model: raw.models[file],
         scale: 0.5,
         deck,
@@ -53,6 +54,27 @@ export const CHARACTERS = IMAGE_FILES.map((file, i) => {
         note: p?.note ?? "Hồ sơ sẽ sớm được công bố.",
     };
 });
+
+// Thẻ đến từ dữ liệu Thám hiểm (Adventure 1/2/3): sinh vật/sự kiện/lựa chọn —
+// chưa có ảnh riêng, model 3D hay QR nên card/hồ sơ tự ẩn các phần đó.
+const EXTRA_CHARACTERS = (raw.extras ?? []).map((e, i) => ({
+    id: `x${i}`,
+    name: e.name,
+    tagline: e.class,
+    charClass: e.class,
+    image: null,
+    hasQr: false,
+    model: undefined,
+    scale: 0.5,
+    deck: e.deck,
+    accent: DECKS[e.deck],
+    stats: e.stats,
+    powers: e.powers,
+    bio: e.bio,
+    note: e.note,
+}));
+
+export const CHARACTERS = [...HERO_CHARACTERS, ...EXTRA_CHARACTERS];
 
 export const MODEL_URLS = CHARACTERS.filter((c) => c.model).map((c) => c.model);
 
