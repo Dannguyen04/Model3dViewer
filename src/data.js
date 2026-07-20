@@ -1,12 +1,14 @@
 // ---------------------------------------------------------------------------
-// DỮ LIỆU NHÂN VẬT
-// Thêm nhân vật = tăng characterCount; thêm info thật = thêm entry profiles;
-// thêm model 3D = thêm entry models. Nhân vật chưa có model -> nút 3D tự ẩn.
+// DỮ LIỆU NHÂN VẬT & ADVENTURE
+// Hero: tăng characterCount; thêm profiles/models theo ảnh.
+// Adventure: tăng adventureCount; thêm entry vào adventures (ảnh thẻ bài, không model 3D).
 // ---------------------------------------------------------------------------
 
 import raw from "./data.json";
 
 const img = (name) => encodeURI(`/character_image/${name}`);
+const cardImg = (name) => encodeURI(`/card_image/${name}`);
+const CARD_PLACEHOLDER = "placeholder.svg";
 
 export const TBD = "Đang cập nhật";
 
@@ -77,6 +79,26 @@ const EXTRA_CHARACTERS = (raw.extras ?? []).map((e, i) => ({
 export const CHARACTERS = [...HERO_CHARACTERS, ...EXTRA_CHARACTERS];
 
 export const MODEL_URLS = CHARACTERS.filter((c) => c.model).map((c) => c.model);
+
+// Adventure: ảnh thẻ bài (card_image/), không có model 3D.
+export const ADVENTURES = (raw.adventures ?? []).map((a) => ({
+    id: a.id,
+    name: a.name,
+    tagline: a.collection ?? TBD,
+    charClass: a.class ?? TBD,
+    collection: a.collection ?? TBD,
+    image: cardImg(a.card ?? CARD_PLACEHOLDER),
+    model: null,
+    isAdventure: true,
+    deck: a.deck ?? "ADVENTURE",
+    accent: DECKS[a.deck ?? "ADVENTURE"],
+    stats: a.stats ?? placeholderStats,
+    powers: a.powers ?? placeholderPowers,
+    bio: a.bio ?? "Thông tin đang được cập nhật.",
+    note: a.note ?? "",
+}));
+
+export const SHOWCASE = [...CHARACTERS, ...ADVENTURES];
 
 export const accentVars = (c) => ({
     "--accent": c.accent.main,

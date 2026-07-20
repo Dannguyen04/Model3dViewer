@@ -30,6 +30,7 @@ import {
     User,
     Calendar,
     Ruler,
+    Scale,
     Tag,
     Lightbulb,
     Heart,
@@ -46,12 +47,17 @@ import {
     Search,
     Box,
 } from "lucide-react";
-import { CHARACTERS, accentVars, TBD } from "./data.js";
+import { CHARACTERS, SHOWCASE, accentVars, TBD } from "./data.js";
 import ModelErrorBoundary from "./ErrorBoundary.jsx";
 import { useHashRoute } from "./useHashRoute.js";
 
 // Ánh xạ nhãn -> icon lucide (đồng bộ, đổi màu theo accent qua currentColor).
-const STAT_ICON = { "Giới tính": User, Tuổi: Calendar, "Chiều cao": Ruler };
+const STAT_ICON = {
+    "Giới tính": User,
+    Tuổi: Calendar,
+    "Chiều cao": Ruler,
+    "Cân nặng": Scale,
+};
 const POWER_ICON = {
     VIT: Heart,
     CTR: Crosshair,
@@ -800,7 +806,8 @@ function useIsTruncated(ref, deps) {
 }
 
 function InfoPage({ character, onView3D, onBack }) {
-    // Vào hồ sơ -> preload model để bấm "3D View" mở tức thì.
+    const isCard = character.isAdventure;
+    // Vào hồ sơ hero -> preload model để bấm "3D View" mở tức thì.
     useEffect(() => preloadModel(character.model), [character.model]);
     const [modal, setModal] = useState(null); // "bio" | "fact" | null
     const bioRef = useRef(null);
@@ -817,7 +824,10 @@ function InfoPage({ character, onView3D, onBack }) {
     ];
 
     return (
-        <div className="info-page" style={accentVars(character)}>
+        <div
+            className={`info-page${isCard ? " is-card" : ""}`}
+            style={accentVars(character)}
+        >
             <button className="back-btn" onClick={onBack}>
                 <ArrowLeft size={16} strokeWidth={2.5} />
                 Showcase
@@ -853,18 +863,21 @@ function InfoPage({ character, onView3D, onBack }) {
                     </div>
                 </div>
 
-                {/* CTA ngay dưới tiêu đề (desktop) / ghim đáy màn hình (mobile)
-                    -> không bị "chôn" dưới thông số + tiểu sử. */}
-                <div className="info-actions">
-                    {character.model ? (
-                        <button className="view3d-btn" onClick={onView3D}>
-                            <Box size={18} strokeWidth={2.2} />
-                            Xem mô hình 3D
-                        </button>
-                    ) : (
-                        <span className="view3d-soon">Mô hình 3D sắp có</span>
-                    )}
-                </div>
+                {/* Hero có model 3D; adventure chỉ có ảnh thẻ bài — không hiện CTA 3D. */}
+                {!isCard && (
+                    <div className="info-actions">
+                        {character.model ? (
+                            <button className="view3d-btn" onClick={onView3D}>
+                                <Box size={18} strokeWidth={2.2} />
+                                Xem mô hình 3D
+                            </button>
+                        ) : (
+                            <span className="view3d-soon">
+                                Mô hình 3D sắp có
+                            </span>
+                        )}
+                    </div>
+                )}
 
                 <div className="spec-grid">
                     {specs.map(({ Ico, label, value }) => (
@@ -919,9 +932,11 @@ function InfoPage({ character, onView3D, onBack }) {
                     <p ref={bioRef}>{character.bio}</p>
                 </div>
 
-                <NoteCallout onClick={() => setModal("fact")}>
-                    {character.note}
-                </NoteCallout>
+                {character.note ? (
+                    <NoteCallout onClick={() => setModal("fact")}>
+                        {character.note}
+                    </NoteCallout>
+                ) : null}
             </div>
 
             {modal && (
@@ -1096,11 +1111,12 @@ function View3DPage({ character, onBack }) {
 // ---------------------------------------------------------------------------
 export default function App() {
     const [nav, navigate] = useHashRoute();
-    const character = CHARACTERS.find((c) => c.id === nav.id) ?? CHARACTERS[0];
+    const character = SHOWCASE.find((c) => c.id === nav.id) ?? CHARACTERS[0];
 
     // ID không hợp lệ trong URL -> đưa về showcase.
-    const validId = CHARACTERS.some((c) => c.id === nav.id);
-    const page = nav.page !== "showcase" && !validId ? "showcase" : nav.page;
+    const validId = SHOWCASE.some((c) => c.id === nav.id);
+    let page = nav.page !== "showcase" && !validId ? "showcase" : nav.page;
+    if (page === "view3d" && character.isAdventure) page = "info";
 
     // Escape = quay lại một bậc.
     useEffect(() => {
@@ -1117,7 +1133,7 @@ export default function App() {
         <div className="app-container">
             {page === "showcase" && (
                 <ShowcasePage
-                    characters={CHARACTERS}
+                    characters={SHOWCASE}
                     onSelect={(id) => navigate({ page: "info", id })}
                 />
             )}
