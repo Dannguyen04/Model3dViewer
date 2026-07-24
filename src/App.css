@@ -1081,7 +1081,7 @@ body,
        top 10% · hai bên 12% · chừa 22% dưới cho banner tên. */
     inset: 10% 12% 22% 12%;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: center;
 }
 
