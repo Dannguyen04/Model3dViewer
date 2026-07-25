@@ -10,6 +10,14 @@ const img = (name) => encodeURI(`/character_image/${name}`);
 const cardImg = (name) => encodeURI(`/card_image/${name}`);
 const CARD_PLACEHOLDER = "placeholder.svg";
 
+// Thư mục ảnh thẻ bài Thám hiểm trên đĩa (adevnture3 giữ nguyên tên gõ nhầm gốc).
+const ADVENTURE_FOLDERS = {
+    "ADVENTURE 1": "adventure1",
+    "ADVENTURE 2": "adventure2",
+    "ADVENTURE 3": "adevnture3",
+};
+const extraCardImg = (deck, file) => encodeURI(`/${ADVENTURE_FOLDERS[deck]}/${file}`);
+
 export const TBD = "Đang cập nhật";
 
 const placeholderStats = [
@@ -58,13 +66,14 @@ const HERO_CHARACTERS = IMAGE_FILES.map((file, i) => {
 });
 
 // Thẻ đến từ dữ liệu Thám hiểm (Adventure 1/2/3): sinh vật/sự kiện/lựa chọn —
-// chưa có ảnh riêng, model 3D hay QR nên card/hồ sơ tự ẩn các phần đó.
+// không có model 3D hay QR nên card/hồ sơ tự ẩn các phần đó. Ảnh thẻ bài lấy
+// từ trường "card" trong data.json (mục nào chưa có ảnh thì vẫn dùng placeholder).
 const EXTRA_CHARACTERS = (raw.extras ?? []).map((e, i) => ({
     id: `x${i}`,
     name: e.name,
     tagline: e.class,
     charClass: e.class,
-    image: null,
+    image: e.card ? extraCardImg(e.deck, e.card) : null,
     hasQr: false,
     model: undefined,
     scale: 0.5,

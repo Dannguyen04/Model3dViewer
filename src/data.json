@@ -103,11 +103,11 @@
                 },
                 {
                     "label": "INT",
-                    "value": 3
+                    "value": 6
                 },
                 {
                     "label": "LUK",
-                    "value": 5
+                    "value": 2
                 }
             ],
             "bio": "Một con Mecha được điều khiển bằng chí tuệ nhân tạo.",
@@ -232,23 +232,23 @@
             "powers": [
                 {
                     "label": "VIT",
-                    "value": 7
+                    "value": 6
                 },
                 {
                     "label": "CTR",
-                    "value": 7
+                    "value": 6
                 },
                 {
                     "label": "STR",
-                    "value": 7
+                    "value": 6
                 },
                 {
                     "label": "INT",
-                    "value": 7
+                    "value": 6
                 },
                 {
                     "label": "LUK",
-                    "value": 7
+                    "value": 6
                 }
             ],
             "bio": "Dáng người không qua cơ bắp nhưng luôn đứng đầu các bài kiểm tra về sức mạnh, luôn đem lại cảm giác vô thực cho đối phương. Luôn đeo mặt nạ sói che đi phần trên của khuôn mặt. Hoàn toàn câm lặng không bao giờ nói một lời nào.",
@@ -279,11 +279,11 @@
             "powers": [
                 {
                     "label": "VIT",
-                    "value": 6
+                    "value": 3
                 },
                 {
                     "label": "CTR",
-                    "value": 5
+                    "value": 4
                 },
                 {
                     "label": "STR",
@@ -291,11 +291,11 @@
                 },
                 {
                     "label": "INT",
-                    "value": 5
+                    "value": 9
                 },
                 {
                     "label": "LUK",
-                    "value": 6
+                    "value": 8
                 }
             ],
             "bio": "Dáng người thanh thoát uyển chuyển do tập võ. Tien là người vui tính thích cười. Bản thân cô là một chiến lược gia sâu sắc và nhạy cảm có thể đưa ra các chiến lược thần sấu, vì vậy nhiều người đùa rằng cô có thể đoán trước tương lai. Cô thích uống trà và đọc các cuốn sách về chăn nuôi.",
@@ -373,23 +373,23 @@
             "powers": [
                 {
                     "label": "VIT",
-                    "value": 8
+                    "value": 9
                 },
                 {
                     "label": "CTR",
-                    "value": 7
+                    "value": 9
                 },
                 {
                     "label": "STR",
-                    "value": 8
+                    "value": 9
                 },
                 {
                     "label": "INT",
-                    "value": 7
+                    "value": 9
                 },
                 {
                     "label": "LUK",
-                    "value": 7
+                    "value": 9
                 }
             ],
             "bio": "Dáng người khủng bố và chỉ cần đứng đấy thôi cũng tảo ra áp lực. ăn mặc đơn giản cảm giác trong tủ quần áo anh ta chỉ đơn giản được quân đội cấp cho. Là một thiên tài đích thực nhưng lười biếng có sự tự cao của thiên tài nhưng đó gần như là điều hiển nhiên đối với anh ta. Thích truyện tranh, nước có ga và gà nướng. Là một fan lớn của Pepsi.",
@@ -471,11 +471,11 @@
                 },
                 {
                     "label": "CTR",
-                    "value": 3
+                    "value": 4
                 },
                 {
                     "label": "STR",
-                    "value": 9
+                    "value": 8
                 },
                 {
                     "label": "INT",
@@ -518,11 +518,11 @@
                 },
                 {
                     "label": "CTR",
-                    "value": 2
+                    "value": 4
                 },
                 {
                     "label": "STR",
-                    "value": 1
+                    "value": 2
                 },
                 {
                     "label": "INT",
@@ -561,7 +561,7 @@
             "powers": [
                 {
                     "label": "VIT",
-                    "value": 7
+                    "value": 6
                 },
                 {
                     "label": "CTR",
@@ -800,7 +800,7 @@
                 },
                 {
                     "label": "CTR",
-                    "value": 3
+                    "value": 7
                 },
                 {
                     "label": "STR",
@@ -1012,6 +1012,7 @@
             "name": "Chất nhờn vô hại",
             "class": "Sinh vật thù địch",
             "deck": "ADVENTURE 1",
+            "card": "chatNhonVoHai.png",
             "stats": [
                 {
                     "icon": "⚖️",
@@ -1053,6 +1054,7 @@
             "name": "Gà đột biến",
             "class": "Sinh vật thù địch",
             "deck": "ADVENTURE 1",
+            "card": "gaDotBien.png",
             "stats": [
                 {
                     "icon": "⚖️",
@@ -1094,6 +1096,7 @@
             "name": "Chó đột biến",
             "class": "Sinh vật thù địch",
             "deck": "ADVENTURE 1",
+            "card": "choDotBien.png",
             "stats": [
                 {
                     "icon": "⚖️",
@@ -1135,6 +1138,7 @@
             "name": "Dơi đột biến",
             "class": "Sinh vật thù địch",
             "deck": "ADVENTURE 1",
+            "card": "doiDotBien.png",
             "stats": [
                 {
                     "icon": "⚖️",
@@ -1176,6 +1180,7 @@
             "name": "Lợn đột biến",
             "class": "Sinh vật thù địch",
             "deck": "ADVENTURE 1",
+            "card": "lonDotBien.png",
             "stats": [
                 {
                     "icon": "⚖️",
@@ -1217,6 +1222,7 @@
             "name": "Chuột",
             "class": "Sinh vật thù địch",
             "deck": "ADVENTURE 1",
+            "card": "chuotBienDi.png",
             "stats": [
                 {
                     "icon": "⚖️",
@@ -1258,6 +1264,7 @@
             "name": "Đàn Chim sẻ đột biến",
             "class": "Sinh vật thù địch",
             "deck": "ADVENTURE 1",
+            "card": "danChimBienDi.png",
             "stats": [
                 {
                     "icon": "⚖️",
@@ -1299,6 +1306,7 @@
             "name": "Chất nhờn",
             "class": "Sinh vật thù địch",
             "deck": "ADVENTURE 1",
+            "card": "chatNhon.png",
             "stats": [
                 {
                     "icon": "⚖️",
@@ -1340,6 +1348,7 @@
             "name": "Mèo đột biến",
             "class": "Sinh vật thù địch",
             "deck": "ADVENTURE 1",
+            "card": "meoDotBien.png",
             "stats": [
                 {
                     "icon": "⚖️",
@@ -1422,6 +1431,7 @@
             "name": "Giải đấu",
             "class": "Sự kiện",
             "deck": "ADVENTURE 1",
+            "card": "giaiDau.png",
             "stats": [],
             "powers": [],
             "bio": "1 đội phát hiện mỏ than và báo về Tổng hành dinh khu vực nhưng vì sơ suất bị lộ thông tin dẫn đến tranh giành mỏ giữa các khu vực. Tổ chức Recon quyết định tổ chức một giải đấu đối kháng để hoà giải và lấy mỏ than làm giải thưởng.",
@@ -1431,6 +1441,7 @@
             "name": "Nhận cứu viện",
             "class": "Sự kiện",
             "deck": "ADVENTURE 1",
+            "card": "nhanCuuVien.png",
             "stats": [],
             "powers": [],
             "bio": "Đội ngũ khác hỗ trợ bạn thám hiểm",
@@ -1440,6 +1451,7 @@
             "name": "Bị tập kết",
             "class": "Sự kiện",
             "deck": "ADVENTURE 1",
+            "card": "biTapKet.png",
             "stats": [],
             "powers": [],
             "bio": "Đội ngũ bị một đội trinh sát khác tấn công bất ngờ",
@@ -1494,6 +1506,7 @@
             "name": "Thương nhân bí ẩn",
             "class": "Lựa chọn",
             "deck": "ADVENTURE 1",
+            "card": "thuongNhanBiAn.png",
             "stats": [],
             "powers": [],
             "bio": "Gặp một gã ở bên ngoài các hầm trú ẩn, thời gian đầu Quân trinh sát vẫn cò tương đối ái ngại đối tượng kì lạ này nhưng sau một thời gian nói tương tác đã nhận đinh 'người' này không có ý xấu và họ vốn là hậu duệ của nhân loại bị bỏ lại ở ngoài các hầm trú ẩn. Đa phần bọn họ không có ý định tấn công các độ của Quân trinh sát nhưng hãy luôn cố để giữ hoà khí với họ",
@@ -1503,6 +1516,7 @@
             "name": "Tháp canh bỏ hoang",
             "class": "Lựa chọn",
             "deck": "ADVENTURE 1",
+            "card": "thapCanhBoHoang.png",
             "stats": [],
             "powers": [],
             "bio": "Phát hiện một tháp canh bỏ hoang, Các khu vực còn tồn tại những kiến trúc nhân tạo thường ít bị ảnh hưởng bởi các qua bom của sự kiện Tái sáng thế. những nơi như này có mức độ phóng xạ thấp hơn được cho là có thể nghỉ ngơi lại.",
@@ -1512,11 +1526,12 @@
             "name": "Nấm",
             "class": "Sinh vật thù địch",
             "deck": "ADVENTURE 2",
+            "card": "namDotBien.png",
             "stats": [],
             "powers": [
                 {
                     "label": "VIT",
-                    "value": 16
+                    "value": 20
                 },
                 {
                     "label": "CTR",
@@ -1542,6 +1557,7 @@
             "name": "Người đột biến",
             "class": "Sinh vật thù địch",
             "deck": "ADVENTURE 2",
+            "card": "nguoiDotBien.png",
             "stats": [
                 {
                     "icon": "⚖️",
@@ -1576,13 +1592,14 @@
                     "value": 10
                 }
             ],
-            "bio": "Một hậu duệ của nhân loại bị bỏ lại sau sự kiện tái sáng thế với trí thông minh bị suy giảm và những độ biến khác thường ở trên cơ thể",
+            "bio": "Một hậu duệ của nhân loại bị bỏ lại sau sự kiện tái sáng thế với trí thông minh bị suy giảm và những đột biến khác thường ở trên cơ thể",
             "note": "Đang cập nhật."
         },
         {
             "name": "Cá vàng khổng lồ tiến hoá",
             "class": "Sinh vật thù địch",
             "deck": "ADVENTURE 2",
+            "card": "caVangBienDi.png",
             "stats": [
                 {
                     "icon": "⚖️",
@@ -1665,6 +1682,7 @@
             "name": "Người đột biến",
             "class": "Sinh vật thù địch",
             "deck": "ADVENTURE 2",
+            "card": "nguoiDotBien2.png",
             "stats": [
                 {
                     "icon": "⚖️",
@@ -1699,7 +1717,7 @@
                     "value": 5
                 }
             ],
-            "bio": "Một hậu duệ của nhân loại bị bỏ lại sau sự kiện tái sáng thế với trí thông minh bị suy giảm và những độ biến khác thường ở trên cơ thể. Người này có một bên tay bị biến đổ khổng lồ với cấu trúc xương và cớ ở khu vực này rắn chắc và khoẻ mạnh đến kinh ngạc hãy cố gắng tránh bị đánh trúng bởi cánh tay này",
+            "bio": "Một hậu duệ của nhân loại bị bỏ lại sau sự kiện tái sáng thế với trí thông minh bị suy giảm và những đột biến khác thường ở trên cơ thể. Người này có một bên tay bị biến đổ khổng lồ với cấu trúc xương và cớ ở khu vực này rắn chắc và khoẻ mạnh đến kinh ngạc hãy cố gắng tránh bị đánh trúng bởi cánh tay này",
             "note": "Đang cập nhật."
         },
         {
@@ -1766,7 +1784,7 @@
                 },
                 {
                     "label": "CTR",
-                    "value": 14
+                    "value": 17
                 },
                 {
                     "label": "STR",
@@ -1778,16 +1796,17 @@
                 },
                 {
                     "label": "LUK",
-                    "value": 9
+                    "value": 12
                 }
             ],
-            "bio": "Một hậu duệ của nhân loại bị bỏ lại sau sự kiện tái sáng thế với trí thông minh bị suy giảm và những độ biến khác thường ở trên cơ thể",
+            "bio": "Một hậu duệ của nhân loại bị bỏ lại sau sự kiện tái sáng thế với trí thông minh bị suy giảm và những đột biến khác thường ở trên cơ thể. Cá thể này có sự biến đổi ở phần đầu và chi sau tương đối trùng khớp với loài cá heo",
             "note": "Đang cập nhật."
         },
         {
             "name": "Thế lực bí ẩn",
             "class": "Sinh vật thù địch",
             "deck": "ADVENTURE 2",
+            "card": "theLucBiAn.png",
             "stats": [
                 {
                     "icon": "⚖️",
@@ -1829,6 +1848,7 @@
             "name": "Bò tót đột biến",
             "class": "Sinh vật thù địch",
             "deck": "ADVENTURE 2",
+            "card": "boTotDotBien.png",
             "stats": [
                 {
                     "icon": "⚖️",
@@ -1852,7 +1872,7 @@
                 },
                 {
                     "label": "STR",
-                    "value": 14
+                    "value": 18
                 },
                 {
                     "label": "INT",
@@ -1870,6 +1890,7 @@
             "name": "Bị tập kết",
             "class": "Sự kiện",
             "deck": "ADVENTURE 2",
+            "card": "biTapKet.png",
             "stats": [],
             "powers": [],
             "bio": "Đội ngũ bị một đội trinh sát khác tấn công bất ngờ",
@@ -1912,9 +1933,19 @@
             "note": "Đang cập nhật."
         },
         {
+            "name": "Tiếp tế trang bị",
+            "class": "Sự kiện",
+            "deck": "ADVENTURE 2",
+            "stats": [],
+            "powers": [],
+            "bio": "Một Trang bị Đặc biệt được gửi đến để tiếp tế cho đội ngũ của bạn",
+            "note": "Đang cập nhật."
+        },
+        {
             "name": "Hội chợ",
             "class": "Sự kiện",
             "deck": "ADVENTURE 2",
+            "card": "hoiCho.png",
             "stats": [],
             "powers": [],
             "bio": "Quân đoàn mở hội trợ để các đội tập hợp và trao đổi tài nguyên",
@@ -1924,6 +1955,7 @@
             "name": "Lơ là",
             "class": "Sự kiện",
             "deck": "ADVENTURE 2",
+            "card": "loLa.png",
             "stats": [],
             "powers": [],
             "bio": "1 Hero của bạn bị thương do thám hiểm",
@@ -1933,6 +1965,7 @@
             "name": "Gặp một cá nhân bí mật",
             "class": "Lựa chọn",
             "deck": "ADVENTURE 2",
+            "card": "cuocGapBiAn.png",
             "stats": [],
             "powers": [],
             "bio": "Gã này được cho là vua của các thương nhân lang thang. Thường xuất hiện ở các khu vực từng là các thành phố lớn trước sự kiện Tái sáng thế và thử thách những người hắn bắt gặp",
@@ -1951,6 +1984,7 @@
             "name": "Thương nhân bí ẩn",
             "class": "Lựa chọn",
             "deck": "ADVENTURE 2",
+            "card": "thuongNhanBiAn.png",
             "stats": [],
             "powers": [],
             "bio": "Gặp một gã ở bên ngoài các hầm trú ẩn tự nhận mình là thương nhân, thời gian đầu Quân trinh sát vẫn cò tương đối ái ngại đối tượng kì lạ này nhưng sau một thời gian nói tương tác đã nhận đinh 'người' này không có ý xấu và họ vốn là hậu duệ của nhân loại bị bỏ lại ở ngoài các hầm trú ẩn. Đa phần bọn họ không có ý định tấn công các độ của Quân trinh sát nhưng hãy luôn cố để giữ hoà khí với họ",
@@ -1960,6 +1994,7 @@
             "name": "Đoàn du mục",
             "class": "Lựa chọn",
             "deck": "ADVENTURE 2",
+            "card": "doanDuMuc.png",
             "stats": [],
             "powers": [],
             "bio": "Đoàn du mục này là các hậu duệ của những người bên ngoài hầm trú ẩn. Đa phần họ đều là những người không quá thân thiện với người ngoài nhưng nếu các độ có thể trao đổi được vật tư họ cần thì họ cũng không ngại trao đổi với bạn.",
@@ -1969,6 +2004,7 @@
             "name": "Tháp canh bỏ hoang",
             "class": "Lựa chọn",
             "deck": "ADVENTURE 2",
+            "card": "thapCanhBoHoang.png",
             "stats": [],
             "powers": [],
             "bio": "Phát hiện một tháp canh bỏ hoang, Các khu vực còn tồn tại những kiến trúc nhân tạo thường ít bị ảnh hưởng bởi các qua bom của sự kiện Tái sáng thế. những nơi như này có mức độ phóng xạ thấp hơn được cho là có thể nghỉ ngơi lại.",
@@ -1978,6 +2014,7 @@
             "name": "Người đột biến",
             "class": "Sinh vật thù địch",
             "deck": "ADVENTURE 3",
+            "card": "nguoiDotBien.png",
             "stats": [
                 {
                     "icon": "⚖️",
@@ -2019,6 +2056,7 @@
             "name": "Chất nhờn đột biến",
             "class": "Sinh vật thù địch",
             "deck": "ADVENTURE 3",
+            "card": "chatNhonDotBien.png",
             "stats": [
                 {
                     "icon": "⚖️",
@@ -2060,6 +2098,7 @@
             "name": "Thỏ đột biến",
             "class": "Sinh vật thù địch",
             "deck": "ADVENTURE 3",
+            "card": "thoDotBien.png",
             "stats": [
                 {
                     "icon": "⚖️",
@@ -2101,6 +2140,7 @@
             "name": "Quái thân mềm",
             "class": "Sinh vật thù địch",
             "deck": "ADVENTURE 3",
+            "card": "quaiThanMem.png",
             "stats": [
                 {
                     "icon": "⚖️",
@@ -2142,6 +2182,7 @@
             "name": "Miasma",
             "class": "Sinh vật thù địch",
             "deck": "ADVENTURE 3",
+            "card": "miasma.png",
             "stats": [
                 {
                     "icon": "⚖️",
@@ -2183,6 +2224,7 @@
             "name": "Cò đột biến",
             "class": "Sinh vật thù địch",
             "deck": "ADVENTURE 3",
+            "card": "coDotBien.png",
             "stats": [
                 {
                     "icon": "⚖️",
@@ -2265,6 +2307,7 @@
             "name": "Nhện đột biến",
             "class": "Sinh vật thù địch",
             "deck": "ADVENTURE 3",
+            "card": "nhetDotBien.png",
             "stats": [
                 {
                     "icon": "⚖️",
@@ -2306,6 +2349,7 @@
             "name": "Thế lực bí ẩn",
             "class": "Sinh vật thù địch",
             "deck": "ADVENTURE 3",
+            "card": "theLucBiAn.png",
             "stats": [
                 {
                     "icon": "⚖️",
@@ -2347,6 +2391,7 @@
             "name": "Nhận cứu viện",
             "class": "Sự kiện",
             "deck": "ADVENTURE 3",
+            "card": "nhanCuuVien.png",
             "stats": [],
             "powers": [],
             "bio": "Đội ngũ khác hỗ trợ bạn thám hiểm",
@@ -2356,6 +2401,7 @@
             "name": "Bị tập kết",
             "class": "Sự kiện",
             "deck": "ADVENTURE 3",
+            "card": "biTapket.png",
             "stats": [],
             "powers": [],
             "bio": "Đội ngũ bị một đội trinh sát khác tấn công bất ngờ",
@@ -2376,7 +2422,7 @@
             "deck": "ADVENTURE 3",
             "stats": [],
             "powers": [],
-            "bio": "Một Hero được gửi đến để tiếp tế cho đội ngũ của bạn",
+            "bio": "Hai Hero được gửi đến để tiếp tế cho đội ngũ của bạn",
             "note": "Đang cập nhật."
         },
         {
@@ -2385,7 +2431,7 @@
             "deck": "ADVENTURE 3",
             "stats": [],
             "powers": [],
-            "bio": "Một Chiến lược được gửi đến để tiếp tế cho đội ngũ của bạn",
+            "bio": "Ba Chiến lược được gửi đến để tiếp tế cho đội ngũ của bạn",
             "note": "Đang cập nhật."
         },
         {
@@ -2394,7 +2440,7 @@
             "deck": "ADVENTURE 3",
             "stats": [],
             "powers": [],
-            "bio": "Một Trang bị được gửi đến để tiếp tế cho đội ngũ của bạn",
+            "bio": "Một Trang bị Đặc biệt được gửi đến để tiếp tế cho đội ngũ của bạn",
             "note": "Đang cập nhật."
         },
         {
@@ -2410,6 +2456,7 @@
             "name": "Lơ là",
             "class": "Sự kiện",
             "deck": "ADVENTURE 3",
+            "card": "loLa.png",
             "stats": [],
             "powers": [],
             "bio": "1 Hero của bạn bị thương do thám hiểm",
@@ -2437,6 +2484,7 @@
             "name": "Thương nhân bí ẩn",
             "class": "Lựa chọn",
             "deck": "ADVENTURE 3",
+            "card": "thuongNhanBiAn.png",
             "stats": [],
             "powers": [],
             "bio": "Gặp một gã ở bên ngoài các hầm trú ẩn tự nhận mình là thương nhân, thời gian đầu Quân trinh sát vẫn cò tương đối ái ngại đối tượng kì lạ này nhưng sau một thời gian nói tương tác đã nhận đinh 'người' này không có ý xấu và họ vốn là hậu duệ của nhân loại bị bỏ lại ở ngoài các hầm trú ẩn. Đa phần bọn họ không có ý định tấn công các độ của Quân trinh sát nhưng hãy luôn cố để giữ hoà khí với họ",
