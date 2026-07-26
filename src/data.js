@@ -74,7 +74,7 @@ const EXTRA_CHARACTERS = (raw.extras ?? []).map((e, i) => ({
     tagline: e.class,
     charClass: e.class,
     image: e.card ? extraCardImg(e.deck, e.card) : null,
-    hasQr: false,
+    hasQr: true,
     model: undefined,
     scale: 0.5,
     deck: e.deck,

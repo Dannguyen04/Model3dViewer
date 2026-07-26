@@ -17,6 +17,10 @@ const urls = [
         id: `c${i}`,
         url: `${BASE_URL}/#/c/c${i}`,
     })),
+    ...(raw.extras ?? []).map((_, i) => ({
+        id: `x${i}`,
+        url: `${BASE_URL}/#/c/x${i}`,
+    })),
     ...(raw.adventures ?? []).map((a) => ({
         id: a.id,
         url: `${BASE_URL}/#/c/${a.id}`,

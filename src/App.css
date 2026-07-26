@@ -2042,13 +2042,17 @@ body,
     .info-watermark {
         font-size: 72px;
     }
-    /* Mobile xếp dọc và cho cuộn -> panel cao tự nhiên, không ép vừa 1 màn hình. */
+    /* Mobile xếp dọc và cho cuộn -> panel cao tự nhiên, không ép vừa 1 màn hình.
+       Ghi đè overflow:hidden kế thừa từ bản desktop (dòng ~142) — nếu không,
+       nội dung dài (tiểu sử, thông số) bị cắt và mobile không cuộn được. */
     .info-panel {
         flex: 1 1 auto;
         max-width: 100%;
         max-height: none;
         justify-content: flex-start;
         gap: 8px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
     .char-name {
         font-size: clamp(28px, 10vw, 44px);
