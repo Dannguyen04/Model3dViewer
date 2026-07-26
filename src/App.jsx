@@ -50,6 +50,7 @@ import {
 import { CHARACTERS, SHOWCASE, accentVars, TBD } from "./data.js";
 import ModelErrorBoundary from "./ErrorBoundary.jsx";
 import { useHashRoute } from "./useHashRoute.js";
+import AdminPage from "./Admin.jsx";
 
 // Ánh xạ nhãn -> icon lucide (đồng bộ, đổi màu theo accent qua currentColor).
 const STAT_ICON = {
@@ -1113,9 +1114,13 @@ export default function App() {
     const [nav, navigate] = useHashRoute();
     const character = SHOWCASE.find((c) => c.id === nav.id) ?? CHARACTERS[0];
 
-    // ID không hợp lệ trong URL -> đưa về showcase.
+    // ID không hợp lệ trong URL -> đưa về showcase. "admin" không gắn với id
+    // nhân vật nên phải loại trừ riêng, không thì bị đá về showcase.
     const validId = SHOWCASE.some((c) => c.id === nav.id);
-    let page = nav.page !== "showcase" && !validId ? "showcase" : nav.page;
+    let page =
+        nav.page !== "showcase" && nav.page !== "admin" && !validId
+            ? "showcase"
+            : nav.page;
     if (page === "view3d" && character.isAdventure) page = "info";
 
     // Escape = quay lại một bậc.
@@ -1151,6 +1156,10 @@ export default function App() {
                     character={character}
                     onBack={() => navigate({ page: "info", id: nav.id })}
                 />
+            )}
+
+            {page === "admin" && (
+                <AdminPage onBack={() => navigate({ page: "showcase" })} />
             )}
         </div>
     );
