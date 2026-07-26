@@ -938,7 +938,7 @@ body,
     /* Cao cố định theo viewport, rộng tự do -> không để hộp rỗng hai bên khi
        màn hình hẹp. */
     width: auto;
-    height: clamp(80px, 12vh, 130px);
+    height: clamp(200px, 1vh, 100px);
     object-fit: contain;
     filter: drop-shadow(0 6px 30px rgba(232, 70, 30, 0.35));
 }
