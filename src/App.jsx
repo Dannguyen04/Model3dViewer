@@ -46,11 +46,13 @@ import {
     X,
     Search,
     Box,
+    ScrollText,
 } from "lucide-react";
 import { CHARACTERS, SHOWCASE, accentVars, TBD } from "./data.js";
 import ModelErrorBoundary from "./ErrorBoundary.jsx";
 import { useHashRoute } from "./useHashRoute.js";
 import AdminPage from "./Admin.jsx";
+import StoryPage from "./StoryPage.jsx";
 
 // Ánh xạ nhãn -> icon lucide (đồng bộ, đổi màu theo accent qua currentColor).
 const STAT_ICON = {
@@ -476,8 +478,16 @@ function CharacterCard({ character, onSelect, index }) {
     );
 }
 
-function ShowcasePage({ characters, onSelect }) {
-    const [deck, setDeck] = useState("ALL");
+function ShowcasePage({ characters, onSelect, onOpenRules, initialDeck = "ALL" }) {
+    // Danh sách deck (giữ thứ tự xuất hiện) + màu đại diện mỗi deck.
+    const decks = ["ALL", ...new Set(characters.map((c) => c.deck))];
+
+    // Cho phép deep-link tới 1 deck cụ thể (vd từ trang Luật chơi) — nếu deck
+    // trong URL không tồn tại (link cũ/gõ sai) thì rơi về "ALL" thay vì lọc ra
+    // danh sách rỗng không rõ lý do.
+    const [deck, setDeck] = useState(
+        decks.includes(initialDeck) ? initialDeck : "ALL",
+    );
     const [query, setQuery] = useState("");
     const searchRef = useRef(null);
 
@@ -493,8 +503,6 @@ function ShowcasePage({ characters, onSelect }) {
         return () => window.removeEventListener("keydown", onKey);
     }, []);
 
-    // Danh sách deck (giữ thứ tự xuất hiện) + màu đại diện mỗi deck.
-    const decks = ["ALL", ...new Set(characters.map((c) => c.deck))];
     const deckColor = Object.fromEntries(
         characters.map((c) => [c.deck, c.accent.main]),
     );
@@ -520,6 +528,10 @@ function ShowcasePage({ characters, onSelect }) {
                     alt="Hero Collector"
                 />
                 <h1 className="showcase-title">Bộ Sưu Tập Nhân Vật</h1>
+                <button className="story-cta" onClick={onOpenRules}>
+                    <ScrollText size={16} strokeWidth={2.2} />
+                    Luật chơi
+                </button>
             </header>
 
             <div className="showcase-controls">
@@ -1117,10 +1129,9 @@ export default function App() {
     // ID không hợp lệ trong URL -> đưa về showcase. "admin" không gắn với id
     // nhân vật nên phải loại trừ riêng, không thì bị đá về showcase.
     const validId = SHOWCASE.some((c) => c.id === nav.id);
+    const noIdPages = ["showcase", "admin", "rules"];
     let page =
-        nav.page !== "showcase" && nav.page !== "admin" && !validId
-            ? "showcase"
-            : nav.page;
+        !noIdPages.includes(nav.page) && !validId ? "showcase" : nav.page;
     if (page === "view3d" && character.isAdventure) page = "info";
 
     // Escape = quay lại một bậc.
@@ -1139,7 +1150,16 @@ export default function App() {
             {page === "showcase" && (
                 <ShowcasePage
                     characters={SHOWCASE}
+                    initialDeck={nav.deck}
                     onSelect={(id) => navigate({ page: "info", id })}
+                    onOpenRules={() => navigate({ page: "rules" })}
+                />
+            )}
+
+            {page === "rules" && (
+                <StoryPage
+                    onBack={() => navigate({ page: "showcase" })}
+                    onViewDeck={(deck) => navigate({ page: "showcase", deck })}
                 />
             )}
 
