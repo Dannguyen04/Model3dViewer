@@ -56,6 +56,12 @@
     /* --- Typography (tham khảo style quychien.com) --- */
     --font-display: "Anton", "Arial Narrow", sans-serif; /* tiêu đề logo game */
     --font-body: "Inter", system-ui, -apple-system, sans-serif;
+    --font-mono: "Space Mono", ui-monospace, "SFMono-Regular", Menlo, monospace; /* phong cách "sổ tay trinh sát" trong Luật chơi */
+
+    /* Tông "sổ tay trinh sát" (khung ghi chú/sơ đồ trong Luật chơi) — dùng lại
+       equipment-gold sẵn có thay vì thêm màu mới, vì sắc ấm gần sepia/amber. */
+    --dossier: var(--equipment-gold);
+    --dossier-dim: color-mix(in srgb, var(--equipment-gold) 55%, transparent);
 
     /* =====================================================================
        DESIGN TOKENS — thang giá trị nhất quán cho spacing / bo góc / icon /

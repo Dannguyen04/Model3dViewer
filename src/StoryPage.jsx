@@ -22,7 +22,7 @@ import {
     X,
     Search,
 } from "lucide-react";
-import { DECKS } from "./data.js";
+import { DECKS, CHARACTERS } from "./data.js";
 import {
     STORY,
     PREP,
@@ -30,11 +30,26 @@ import {
     SETUP_STEPS,
     TURN_FLOW,
     ROUND_NOTE,
-    FORMATION,
+    FORMATION_INTRO,
+    FORMATION_SWAPS,
+    FORMATION_OVERFLOW,
+    CARD_ANATOMY,
     CARD_TYPES,
     COMBAT,
     PENALTIES,
 } from "./storyRulesContent.js";
+
+// 1 thẻ minh hoạ / kind (Quái vật, Sự kiện, Lựa chọn) lấy từ dữ liệu thẻ Thám
+// hiểm thật đã có sẵn ảnh — cho người chơi thấy mặt thẻ thực tế ngay tại luật
+// thay vì chỉ đọc mô tả suông.
+const ADVENTURE_SAMPLE_CLASSES = ["Sinh vật thù địch", "Sự kiện", "Lựa chọn"];
+const ADVENTURE_SAMPLE_CARDS = ADVENTURE_SAMPLE_CLASSES.map((cls) =>
+    CHARACTERS.find((c) => c.charClass === cls && c.image),
+).filter(Boolean);
+
+const ANATOMY_CARD = CHARACTERS.find(
+    (c) => c.name === CARD_ANATOMY.cardName && c.deck === CARD_ANATOMY.deck,
+);
 
 const COMBAT_ICON = {
     VIT: Heart,
@@ -43,6 +58,14 @@ const COMBAT_ICON = {
     INT: Brain,
     LUK: Clover,
 };
+
+// Giá trị cao nhất trong ví dụ chiến đấu — dùng để scale độ dài thanh chỉ số
+// trong bảng (0 → giá trị này = 0 → 100%), chỉ để minh hoạ trực quan hơn con
+// số suông, không phải luật (không có "thang điểm tối đa" thật trong luật).
+const COMBAT_MAX = Math.max(
+    ...COMBAT.example.teamA.powers,
+    ...COMBAT.example.teamB.powers,
+);
 
 // Mục lục của section "Luật chơi" — id phải khớp với id truyền cho từng
 // RuleBlock bên dưới, dùng chung cho cả nhảy nhanh (click) và scroll-spy
@@ -61,7 +84,12 @@ const RULES_TOC = [
 // Chỉ những deck thực sự có nhân vật/lá bài duyệt được ở trang Showcase mới
 // hiện link "Xem trong Showcase" — [Trang bị]/[Phát triển]/[Chiến lược] chưa
 // có model/asset riêng nên link sẽ ra danh sách rỗng, không hiện là đúng.
-const BROWSABLE_DECKS = new Set(["HERO", "ADVENTURE 1", "ADVENTURE 2", "ADVENTURE 3"]);
+const BROWSABLE_DECKS = new Set([
+    "HERO",
+    "ADVENTURE 1",
+    "ADVENTURE 2",
+    "ADVENTURE 3",
+]);
 
 const RULE_IDS = RULES_TOC.map((r) => r.id);
 
@@ -69,14 +97,27 @@ const RULE_IDS = RULES_TOC.map((r) => r.id);
 // chi tiết nhỏ nằm sâu trong card đang thu gọn (vd "Token hạn chế", "INT").
 const RULE_SEARCH_TEXT = {
     objective: [OBJECTIVE.win, OBJECTIVE.lose].join(" "),
-    prep: [PREP.players, PREP.dice, PREP.board, ...PREP.tokens, ...PREP.deckList].join(
-        " ",
-    ),
+    prep: [
+        PREP.players,
+        PREP.dice,
+        PREP.board,
+        ...PREP.tokens,
+        ...PREP.deckList,
+    ].join(" "),
     setup: SETUP_STEPS.join(" "),
     turns: [...TURN_FLOW, ROUND_NOTE].join(" "),
-    formation: FORMATION.join(" "),
+    formation: [
+        FORMATION_INTRO,
+        ...FORMATION_SWAPS.map((s) => `${s.label} ${s.limit}`),
+        ...FORMATION_OVERFLOW.map((f) => `${f.subject} ${f.limit} ${f.rule}`),
+    ].join(" "),
     cards: CARD_TYPES.map((t) =>
-        [t.name, t.desc, t.note, ...(t.kinds ?? []).map((k) => `${k.name} ${k.desc}`)]
+        [
+            t.name,
+            t.desc,
+            t.note,
+            ...(t.kinds ?? []).map((k) => `${k.name} ${k.desc}`),
+        ]
             .filter(Boolean)
             .join(" "),
     ).join(" "),
@@ -85,7 +126,9 @@ const RULE_SEARCH_TEXT = {
         COMBAT.rule,
         ...COMBAT.tie,
         COMBAT.scoring,
-        COMBAT.example,
+        COMBAT.example.teamA.label,
+        COMBAT.example.teamB.label,
+        COMBAT.example.result,
     ].join(" "),
     penalties: PENALTIES.map((p) =>
         [p.name, p.desc, p.note].filter(Boolean).join(" "),
@@ -93,9 +136,10 @@ const RULE_SEARCH_TEXT = {
 };
 
 const RULE_HAYSTACK = Object.fromEntries(
-    RULES_TOC.map(({ id, label }) =>
-        [id, `${label} ${RULE_SEARCH_TEXT[id] ?? ""}`.toLowerCase()],
-    ),
+    RULES_TOC.map(({ id, label }) => [
+        id,
+        `${label} ${RULE_SEARCH_TEXT[id] ?? ""}`.toLowerCase(),
+    ]),
 );
 
 // Mỗi mục 1 màu chủ đề (không phải mức độ quan trọng) để lưới 8 card dễ quét
@@ -139,6 +183,28 @@ function SectionHead({ icon: Icon, kicker, title }) {
     );
 }
 
+// Khung "sổ tay trinh sát" (blueprint/dossier) — 4 vệt góc + nhãn "FIG. xx"
+// dùng chung cho 3 khối minh hoạ trực quan nhất của Luật chơi (Cách đọc lá
+// bài, Ví dụ chiến đấu, Cheat-sheet đội hình) để tạo phong cách nhất quán,
+// gợi cảm giác tài liệu thực địa của Quân trinh sát trong cốt truyện.
+function DossierFrame({ fig, title, className = "", children }) {
+    return (
+        <div className={`dossier-frame ${className}`}>
+            <span className="dossier-corner dossier-corner--tl" />
+            <span className="dossier-corner dossier-corner--tr" />
+            <span className="dossier-corner dossier-corner--bl" />
+            <span className="dossier-corner dossier-corner--br" />
+            {(fig || title) && (
+                <div className="dossier-caption">
+                    {fig && <span className="dossier-fig">{fig}</span>}
+                    {title && <span className="dossier-title">{title}</span>}
+                </div>
+            )}
+            <div className="dossier-body">{children}</div>
+        </div>
+    );
+}
+
 // Mỗi mục luật là 1 card trong lưới — mặc định thu gọn (chỉ icon + tiêu đề +
 // tóm tắt 1 dòng), click vào tiêu đề để mở rộng xem đầy đủ. Card đang mở tự
 // chiếm trọn hàng (grid-column: 1 / -1, xem App.css) để có đủ chỗ đọc thay vì
@@ -178,10 +244,12 @@ function RuleBlock({
                 >
                     <span className="rule-block-title-main">
                         <Icon size={22} strokeWidth={2.2} />
-                        {title}
+                        <span className="rule-block-title-text">{title}</span>
                     </span>
                     <span className="rule-block-title-trail">
-                        {badge && <span className="rule-block-badge">{badge}</span>}
+                        {badge && (
+                            <span className="rule-block-badge">{badge}</span>
+                        )}
                         <ChevronDown
                             size={18}
                             strokeWidth={2.4}
@@ -190,7 +258,9 @@ function RuleBlock({
                     </span>
                 </button>
             </h3>
-            {!open && summary && <p className="rule-block-summary">{summary}</p>}
+            {!open && summary && (
+                <p className="rule-block-summary">{summary}</p>
+            )}
             <div className="rule-block-body" id={contentId}>
                 <div className="rule-block-body-inner">{children}</div>
             </div>
@@ -217,6 +287,16 @@ function CardTypeEntry({ type, onViewDeck }) {
                         </li>
                     ))}
                 </ul>
+            )}
+            {type.key === "adventure" && ADVENTURE_SAMPLE_CARDS.length > 0 && (
+                <div className="card-type-gallery">
+                    {ADVENTURE_SAMPLE_CARDS.map((c) => (
+                        <figure className="card-type-gallery-item" key={c.id}>
+                            <img src={c.image} alt={c.name} loading="lazy" />
+                            <figcaption>{c.charClass}</figcaption>
+                        </figure>
+                    ))}
+                </div>
             )}
             {type.note && <p className="card-type-note">{type.note}</p>}
             {onViewDeck && BROWSABLE_DECKS.has(type.deck) && (
@@ -306,7 +386,10 @@ export default function StoryPage({ onBack, onViewDeck }) {
     // trang Showcase (App.jsx) để hành vi nhất quán toàn app.
     useEffect(() => {
         const onKey = (e) => {
-            if (e.key === "/" && document.activeElement !== searchInputRef.current) {
+            if (
+                e.key === "/" &&
+                document.activeElement !== searchInputRef.current
+            ) {
                 e.preventDefault();
                 searchInputRef.current?.focus();
             }
@@ -361,11 +444,17 @@ export default function StoryPage({ onBack, onViewDeck }) {
             </button>
 
             <div className="story-jump">
-                <button className="story-jump-chip" onClick={() => scrollTo(loreRef)}>
+                <button
+                    className="story-jump-chip"
+                    onClick={() => scrollTo(loreRef)}
+                >
                     <BookOpen size={14} strokeWidth={2.2} />
                     <span>Cốt truyện</span>
                 </button>
-                <button className="story-jump-chip" onClick={() => scrollTo(rulesRef)}>
+                <button
+                    className="story-jump-chip"
+                    onClick={() => scrollTo(rulesRef)}
+                >
                     <ScrollText size={14} strokeWidth={2.2} />
                     <span>Luật chơi</span>
                 </button>
@@ -374,7 +463,11 @@ export default function StoryPage({ onBack, onViewDeck }) {
             <div className="story-scroll" ref={scrollRootRef}>
                 {/* ===================== CỐT TRUYỆN (tóm tắt mở đầu) ===================== */}
                 <section ref={loreRef} className="story-section story-intro">
-                    <SectionHead icon={BookOpen} kicker="Tóm tắt cốt truyện" title="Cốt Truyện" />
+                    <SectionHead
+                        icon={BookOpen}
+                        // kicker="Tóm tắt cốt truyện"
+                        title="Cốt Truyện"
+                    />
 
                     <p className="story-lead">{STORY.intro}</p>
 
@@ -384,10 +477,13 @@ export default function StoryPage({ onBack, onViewDeck }) {
                         ))}
                     </div>
 
-                    <div className="story-role">
-                        <span className="story-role-label">Vai trò của bạn</span>
+                    <DossierFrame
+                        fig="HỒ SƠ"
+                        title="Vai trò của bạn"
+                        className="story-role"
+                    >
                         <p>{STORY.role}</p>
-                    </div>
+                    </DossierFrame>
 
                     {/* Trang "Cốt truyện chi tiết" chưa có data/route — ẩn hẳn
                         lối vào thay vì hiện nút disabled, tới khi nội dung đó
@@ -396,7 +492,11 @@ export default function StoryPage({ onBack, onViewDeck }) {
 
                 {/* ============================== LUẬT CHƠI ============================== */}
                 <section ref={rulesRef} className="story-section rules-section">
-                    <SectionHead icon={ScrollText} kicker="Luật chơi" title="Luật Chơi" />
+                    <SectionHead
+                        icon={ScrollText}
+                        // kicker="Luật chơi"
+                        title="Luật Chơi"
+                    />
 
                     <nav className="rules-toc" aria-label="Mục lục luật chơi">
                         {RULES_TOC.map(({ id, label, icon: Icon }) => (
@@ -404,7 +504,9 @@ export default function StoryPage({ onBack, onViewDeck }) {
                                 key={id}
                                 type="button"
                                 className={`rules-toc-item${
-                                    !matchIds && activeRuleId === id ? " is-active" : ""
+                                    !matchIds && activeRuleId === id
+                                        ? " is-active"
+                                        : ""
                                 }`}
                                 onClick={() => scrollToRule(id)}
                             >
@@ -415,9 +517,41 @@ export default function StoryPage({ onBack, onViewDeck }) {
                     </nav>
 
                     <div className="rules-toolbar">
-                        <span className="rules-progress">
-                            {viewedIds.size}/{RULE_IDS.length} mục đã xem
-                        </span>
+                        <div
+                            className="rules-progress"
+                            role="status"
+                            aria-label={`${viewedIds.size}/${RULE_IDS.length} mục đã xem`}
+                        >
+                            <span
+                                className="rules-progress-dots"
+                                aria-hidden="true"
+                            >
+                                {RULES_TOC.map(({ id }) => (
+                                    <span
+                                        key={id}
+                                        className={`rules-progress-dot${
+                                            viewedIds.has(id)
+                                                ? " is-viewed"
+                                                : ""
+                                        }`}
+                                        style={
+                                            RULE_ACCENT[id]
+                                                ? {
+                                                      "--dot-accent":
+                                                          RULE_ACCENT[id],
+                                                  }
+                                                : undefined
+                                        }
+                                    />
+                                ))}
+                            </span>
+                            <span
+                                className="rules-progress-text"
+                                aria-hidden="true"
+                            >
+                                {viewedIds.size}/{RULE_IDS.length}
+                            </span>
+                        </div>
                         <div className="rules-search">
                             <Search size={14} strokeWidth={2.2} />
                             <input
@@ -449,7 +583,8 @@ export default function StoryPage({ onBack, onViewDeck }) {
 
                     {matchIds && matchIds.length === 0 ? (
                         <p className="rules-search-empty">
-                            Không tìm thấy mục luật nào khớp với “{query.trim()}”.
+                            Không tìm thấy mục luật nào khớp với “{query.trim()}
+                            ”.
                         </p>
                     ) : (
                         <div className="rules-list">
@@ -481,8 +616,9 @@ export default function StoryPage({ onBack, onViewDeck }) {
                                     onRegister={registerRuleRef}
                                 >
                                     <p className="rule-text">
-                                        {PREP.players} Cần có: {PREP.dice}, các bộ Token (
-                                        {PREP.tokens.join(", ")}) và {PREP.board.toLowerCase()}
+                                        {PREP.players} Cần có: {PREP.dice}, các
+                                        bộ Token ({PREP.tokens.join(", ")}) và{" "}
+                                        {PREP.board.toLowerCase()}
                                     </p>
                                     <div className="deck-chip-row">
                                         {PREP.deckList.map((name) => (
@@ -530,7 +666,9 @@ export default function StoryPage({ onBack, onViewDeck }) {
                                             <li key={i}>{s}</li>
                                         ))}
                                     </ol>
-                                    <p className="rule-text rule-text--muted">{ROUND_NOTE}</p>
+                                    <p className="rule-text rule-text--muted">
+                                        {ROUND_NOTE}
+                                    </p>
                                 </RuleBlock>
                             )}
 
@@ -544,11 +682,51 @@ export default function StoryPage({ onBack, onViewDeck }) {
                                     onToggle={toggleRule}
                                     onRegister={registerRuleRef}
                                 >
-                                    <ul className="rule-list">
-                                        {FORMATION.map((s, i) => (
-                                            <li key={i}>{s}</li>
-                                        ))}
-                                    </ul>
+                                    <p className="rule-text">
+                                        {FORMATION_INTRO}
+                                    </p>
+
+                                    <DossierFrame
+                                        fig="FIG. 03"
+                                        title="Đội hình — giới hạn & tràn ô"
+                                    >
+                                        <span className="formation-subhead">
+                                            Giới hạn hoán đổi mỗi vòng
+                                        </span>
+                                        <div className="formation-swap-list">
+                                            {FORMATION_SWAPS.map((s) => (
+                                                <div
+                                                    className="formation-swap"
+                                                    key={s.label}
+                                                >
+                                                    <span>{s.label}</span>
+                                                    <span className="formation-swap-limit">
+                                                        {s.limit}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        <span className="formation-subhead">
+                                            Khi đã đầy, rút thêm thì sao?
+                                        </span>
+                                        <div className="formation-overflow-table">
+                                            {FORMATION_OVERFLOW.map((f) => (
+                                                <div
+                                                    className="formation-overflow-row"
+                                                    key={f.subject}
+                                                >
+                                                    <span className="formation-overflow-subject">
+                                                        {f.subject}
+                                                        <small>{f.limit}</small>
+                                                    </span>
+                                                    <span className="formation-overflow-rule">
+                                                        {f.rule}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </DossierFrame>
                                 </RuleBlock>
                             )}
 
@@ -562,6 +740,56 @@ export default function StoryPage({ onBack, onViewDeck }) {
                                     onToggle={toggleRule}
                                     onRegister={registerRuleRef}
                                 >
+                                    {ANATOMY_CARD && (
+                                        <DossierFrame
+                                            fig="FIG. 01"
+                                            title="Cách đọc 1 lá bài"
+                                            className="card-anatomy"
+                                        >
+                                            <div className="card-anatomy-body">
+                                                <div className="card-anatomy-frame">
+                                                    <img
+                                                        src={ANATOMY_CARD.image}
+                                                        alt={ANATOMY_CARD.name}
+                                                    />
+                                                    {CARD_ANATOMY.legend.map(
+                                                        (l) => (
+                                                            <span
+                                                                className="card-anatomy-pin"
+                                                                key={l.n}
+                                                                style={{
+                                                                    top: `${l.top}%`,
+                                                                    left: `${l.left}%`,
+                                                                }}
+                                                            >
+                                                                {l.n}
+                                                            </span>
+                                                        ),
+                                                    )}
+                                                </div>
+                                                <ol className="card-anatomy-legend">
+                                                    {CARD_ANATOMY.legend.map(
+                                                        (l) => (
+                                                            <li key={l.n}>
+                                                                <span className="card-anatomy-legend-num">
+                                                                    {l.n}
+                                                                </span>
+                                                                <span>
+                                                                    <strong>
+                                                                        {
+                                                                            l.label
+                                                                        }
+                                                                    </strong>{" "}
+                                                                    — {l.desc}
+                                                                </span>
+                                                            </li>
+                                                        ),
+                                                    )}
+                                                </ol>
+                                            </div>
+                                        </DossierFrame>
+                                    )}
+
                                     <div className="card-type-list">
                                         {CARD_TYPES.map((t) => (
                                             <CardTypeEntry
@@ -589,10 +817,18 @@ export default function StoryPage({ onBack, onViewDeck }) {
                                         {COMBAT.order.map((label, i) => {
                                             const Ico = COMBAT_ICON[label];
                                             return (
-                                                <span className="combat-order-step" key={label}>
-                                                    <Ico size={15} strokeWidth={2.2} />
+                                                <span
+                                                    className="combat-order-step"
+                                                    key={label}
+                                                >
+                                                    <Ico
+                                                        size={15}
+                                                        strokeWidth={2.2}
+                                                    />
                                                     {label}
-                                                    {i < COMBAT.order.length - 1 && (
+                                                    {i <
+                                                        COMBAT.order.length -
+                                                            1 && (
                                                         <span className="combat-order-arrow">
                                                             →
                                                         </span>
@@ -610,12 +846,101 @@ export default function StoryPage({ onBack, onViewDeck }) {
                                     <p className="rule-text rule-text--muted">
                                         {COMBAT.scoring}
                                     </p>
-                                    <div className="combat-example">
-                                        <span className="combat-example-label">
-                                            Ví dụ minh hoạ
-                                        </span>
-                                        <p>{COMBAT.example}</p>
-                                    </div>
+                                    <DossierFrame
+                                        fig="FIG. 02"
+                                        title="Ví dụ minh hoạ"
+                                        className="combat-example"
+                                    >
+                                        <div className="combat-table-wrap">
+                                            <table className="combat-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col" />
+                                                        {COMBAT.order.map(
+                                                            (label) => (
+                                                                <th
+                                                                    scope="col"
+                                                                    key={label}
+                                                                >
+                                                                    {label}
+                                                                </th>
+                                                            ),
+                                                        )}
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {[
+                                                        COMBAT.example.teamA,
+                                                        COMBAT.example.teamB,
+                                                    ].map((team, ti) => {
+                                                        const other =
+                                                            ti === 0
+                                                                ? COMBAT.example
+                                                                      .teamB
+                                                                : COMBAT.example
+                                                                      .teamA;
+                                                        return (
+                                                            <tr
+                                                                key={team.label}
+                                                            >
+                                                                <th scope="row">
+                                                                    {team.label}
+                                                                </th>
+                                                                {team.powers.map(
+                                                                    (v, i) => (
+                                                                        <td
+                                                                            key={
+                                                                                COMBAT
+                                                                                    .order[
+                                                                                    i
+                                                                                ]
+                                                                            }
+                                                                            className={
+                                                                                v >
+                                                                                other
+                                                                                    .powers[
+                                                                                    i
+                                                                                ]
+                                                                                    ? "is-win"
+                                                                                    : v ===
+                                                                                        other
+                                                                                            .powers[
+                                                                                            i
+                                                                                        ]
+                                                                                      ? "is-tie"
+                                                                                      : undefined
+                                                                            }
+                                                                        >
+                                                                            <span className="combat-cell">
+                                                                                <span
+                                                                                    className="combat-cell-bar"
+                                                                                    style={{
+                                                                                        "--bar-pct": `${Math.round(
+                                                                                            (v /
+                                                                                                COMBAT_MAX) *
+                                                                                                100,
+                                                                                        )}%`,
+                                                                                    }}
+                                                                                />
+                                                                                <span className="combat-cell-value">
+                                                                                    {
+                                                                                        v
+                                                                                    }
+                                                                                </span>
+                                                                            </span>
+                                                                        </td>
+                                                                    ),
+                                                                )}
+                                                            </tr>
+                                                        );
+                                                    })}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <p className="combat-example-result">
+                                            {COMBAT.example.result}
+                                        </p>
+                                    </DossierFrame>
                                 </RuleBlock>
                             )}
 
@@ -631,11 +956,20 @@ export default function StoryPage({ onBack, onViewDeck }) {
                                 >
                                     <div className="penalty-list">
                                         {PENALTIES.map((p) => (
-                                            <div className="penalty-item" key={p.name}>
-                                                <span className="penalty-name">{p.name}</span>
-                                                <p className="penalty-desc">{p.desc}</p>
+                                            <div
+                                                className="penalty-item"
+                                                key={p.name}
+                                            >
+                                                <span className="penalty-name">
+                                                    {p.name}
+                                                </span>
+                                                <p className="penalty-desc">
+                                                    {p.desc}
+                                                </p>
                                                 {p.note && (
-                                                    <p className="penalty-note">{p.note}</p>
+                                                    <p className="penalty-note">
+                                                        {p.note}
+                                                    </p>
                                                 )}
                                             </div>
                                         ))}
@@ -685,7 +1019,9 @@ export default function StoryPage({ onBack, onViewDeck }) {
                                 key={id}
                                 type="button"
                                 className={`rules-toc-sheet-item${
-                                    !matchIds && activeRuleId === id ? " is-active" : ""
+                                    !matchIds && activeRuleId === id
+                                        ? " is-active"
+                                        : ""
                                 }`}
                                 onClick={() => scrollToRule(id)}
                             >

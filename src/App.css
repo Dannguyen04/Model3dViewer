@@ -2634,6 +2634,21 @@ body,
     height: 100%;
 }
 
+/* Lớp "hạt giấy" phủ toàn trang Cốt truyện/Luật chơi cho cảm giác tài liệu
+   thực địa cũ — cố định trên viewport (không cuộn theo nội dung), rất mờ,
+   mix-blend-mode overlay để không đục màu nền bên dưới. pointer-events:none
+   để không cản click xuyên qua. */
+.story-page::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
 .story-jump {
     position: absolute;
     top: 20px;
@@ -2693,8 +2708,23 @@ body,
 }
 
 .rules-section {
-    padding-top: 40px;
-    border-top: 1px solid var(--hair);
+    padding-top: 44px;
+}
+
+/* Đường phân cách "xé giấy" giữa Cốt truyện và Luật chơi — 2 gradient chéo
+   tạo răng cưa tam giác, thay cho 1 đường kẻ thẳng vô hồn, đúng chất tài
+   liệu thực địa được xé ra từ 1 tập hồ sơ dày hơn. */
+.rules-section::before {
+    content: "";
+    display: block;
+    height: 11px;
+    margin: 0 -5vw 32px;
+    background:
+        linear-gradient(-45deg, transparent 6px, var(--dossier-dim) 6px) 0 100% / 12px 12px
+            repeat-x,
+        linear-gradient(45deg, transparent 6px, var(--dossier-dim) 6px) 0 100% / 12px 12px
+            repeat-x;
+    opacity: 0.7;
 }
 
 /* Header căn giữa — cùng khuôn với .showcase-head (logo + tiêu đề căn giữa)
@@ -2748,30 +2778,27 @@ body,
     margin: 0 auto var(--sp-5);
 }
 
+/* Mỗi đoạn lore trông như 1 ghi chú thực địa được đóng lề — vạch đứt bên
+   trái cùng tông màu dossier, khớp với style formation-swap/overflow-row
+   đang dùng trong Luật chơi để 2 section nhìn cùng 1 bộ tài liệu. */
 .story-lore p {
+    padding-left: 14px;
+    border-left: 2px dashed var(--dossier-dim);
     font-size: 15px;
     line-height: 1.7;
     color: rgba(255, 255, 255, 0.75);
 }
 
+/* "Vai trò của bạn" giờ dùng chung khung .dossier-frame (góc ống ngắm + nhãn
+   FIG.) như Luật chơi, chỉ đổi màu góc/nhãn sang accent hiện tại (thường là
+   Hero/Grow) qua biến --dossier cục bộ, thay vì viền kín đơn sắc như trước. */
 .story-role {
     max-width: 760px;
-    padding: var(--sp-4) 18px;
     margin: 0 auto var(--sp-6);
-    border: 1px solid var(--accent, var(--grow-teal));
     border-radius: var(--r-lg);
-    background: color-mix(in srgb, var(--accent, var(--grow-teal)) 12%, transparent);
-}
-
-.story-role-label {
-    display: block;
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: 13px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--accent-light, var(--grow-green));
-    margin-bottom: 6px;
+    background: color-mix(in srgb, var(--accent, var(--grow-teal)) 10%, transparent);
+    --dossier: var(--accent-light, var(--grow-green));
+    --dossier-dim: color-mix(in srgb, var(--accent-light, var(--grow-green)) 55%, transparent);
 }
 
 .story-role p {
@@ -2809,25 +2836,33 @@ body,
     border-radius: var(--r-pill);
     background: transparent;
     color: rgba(255, 255, 255, 0.55);
-    font-family: inherit;
-    font-size: 12.5px;
-    font-weight: 500;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
     white-space: nowrap;
     cursor: pointer;
     transition:
         border-color 0.15s ease,
         color 0.15s ease,
-        background 0.15s ease;
+        background 0.15s ease,
+        transform 0.15s ease;
 }
 
 .rules-toc-item:hover {
     color: #fff;
 }
 
+/* Mục đang xem trông như 1 tag vừa được "đóng dấu" — hơi nghiêng, viền đôi —
+   thay vì chỉ đổi màu nền như pill thường. */
 .rules-toc-item.is-active {
     border-color: color-mix(in srgb, var(--brand-orange) 55%, transparent);
+    outline: 1px solid color-mix(in srgb, var(--brand-orange) 35%, transparent);
+    outline-offset: 2px;
     background: color-mix(in srgb, var(--brand-orange) 18%, transparent);
     color: #fff;
+    transform: rotate(-1.5deg);
 }
 
 /* Thanh công cụ trên lưới luật: ô tìm kiếm (lọc + ép mở card khớp từ khoá)
@@ -2842,13 +2877,16 @@ body,
     margin: 0 auto var(--sp-5);
 }
 
+/* Ô tìm kiếm kiểu "máy đánh chữ hồ sơ" — viền đứt nét, font mono, con trỏ
+   nhấp nháy khi còn trống (chỉ dùng :has(), không hỗ trợ thì rơi về ô tìm
+   kiếm bình thường, không mất chức năng gì). */
 .rules-search {
     display: flex;
     align-items: center;
     gap: 8px;
     min-width: 240px;
     padding: 8px 14px;
-    border: 1px solid var(--hair);
+    border: 1px dashed var(--dossier-dim);
     border-radius: var(--r-pill);
     background: var(--bg-panel);
     color: rgba(255, 255, 255, 0.45);
@@ -2859,9 +2897,24 @@ body,
     border: none;
     background: none;
     color: #fff;
-    font-family: inherit;
+    font-family: var(--font-mono);
     font-size: 13px;
     outline: none;
+}
+
+.rules-search:has(input:placeholder-shown)::after {
+    content: "";
+    flex-shrink: 0;
+    width: 6px;
+    height: 13px;
+    background: var(--dossier);
+    animation: caretBlink 1s steps(1, jump-none) infinite;
+}
+
+@keyframes caretBlink {
+    50% {
+        opacity: 0;
+    }
 }
 
 .rules-search input::placeholder {
@@ -2902,13 +2955,56 @@ body,
     color: #fff;
 }
 
+/* Tiến trình đọc giờ là 1 dải "ô đóng dấu" — mỗi ô ứng với 1 mục luật, chưa
+   xem thì rỗng, xem rồi thì "đóng dấu" nảy vào đúng màu accent của mục đó,
+   trực quan hơn nhiều so với chỉ đọc số X/8. */
 .rules-progress {
+    display: flex;
+    align-items: center;
+    gap: 9px;
     padding: 8px 14px;
     border: 1px solid var(--hair);
     border-radius: var(--r-pill);
     color: rgba(255, 255, 255, 0.5);
+}
+
+.rules-progress-dots {
+    display: flex;
+    gap: 5px;
+}
+
+.rules-progress-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 2px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: transparent;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.rules-progress-dot.is-viewed {
+    border-color: var(--dot-accent, var(--brand-orange));
+    background: var(--dot-accent, var(--brand-orange));
+    animation: dotStamp 0.4s cubic-bezier(0.3, 1.6, 0.4, 1) both;
+}
+
+@keyframes dotStamp {
+    from {
+        transform: scale(1.8);
+        opacity: 0.3;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.rules-progress-text {
+    font-family: var(--font-mono);
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 700;
     white-space: nowrap;
 }
 
@@ -2931,21 +3027,62 @@ body,
     align-items: start;
     max-width: 1180px;
     margin: 0 auto;
+    /* Đếm thứ tự card đang hiển thị để in số hồ sơ "01, 02..." mờ phía sau
+       mỗi khối — đếm lại mỗi lần render nên khớp cả khi search lọc bớt card. */
+    counter-reset: rule-index;
 }
 
 .rule-block {
+    position: relative;
+    /* Cô lập stacking context để watermark số (z-index: -1) chỉ nằm sau nội
+       dung của chính card này, không tụt xuống dưới cả .story-scroll. */
+    isolation: isolate;
+    counter-increment: rule-index;
     padding: var(--sp-4) 18px;
     border: 1px solid var(--hair);
     border-left: 3px solid var(--rule-accent, var(--hair));
     border-radius: var(--r-lg);
     background: var(--bg-panel);
-    transition: border-color 0.15s ease;
+    transition:
+        border-color 0.15s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
     /* Chừa chỗ cho .rules-toc sticky ở trên khi nhảy tới bằng click, tránh
        tiêu đề card bị thanh mục lục che mất. */
     scroll-margin-top: 90px;
     /* Card mới hiện ra (vd sau khi xoá tìm kiếm) mờ dần vào thay vì bật ra
        đột ngột. */
     animation: ruleCardIn 0.2s ease both;
+}
+
+/* Số hồ sơ "01, 02..." to, mờ, nằm ở góc dưới-phải mỗi card — cảm giác mỗi
+   mục luật là 1 trang tài liệu được đánh số trong tập hồ sơ trinh sát, thay
+   vì chỉ là 1 ô trong lưới vô danh. */
+.rule-block::before {
+    content: counter(rule-index, decimal-leading-zero);
+    position: absolute;
+    z-index: -1;
+    right: 10px;
+    bottom: -10px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 68px;
+    line-height: 1;
+    color: var(--rule-accent, var(--brand-orange));
+    opacity: 0.1;
+    pointer-events: none;
+    user-select: none;
+}
+
+.rule-block:hover,
+.rule-block:focus-within {
+    border-color: color-mix(in srgb, var(--rule-accent, var(--brand-orange)) 55%, var(--hair));
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px -14px color-mix(in srgb, var(--rule-accent, var(--brand-orange)) 65%, transparent);
+}
+
+.rule-block.is-open {
+    box-shadow: 0 14px 36px -16px color-mix(in srgb, var(--rule-accent, var(--brand-orange)) 55%, transparent);
 }
 
 @keyframes ruleCardIn {
@@ -2961,6 +3098,29 @@ body,
 
 .rule-block.is-open {
     grid-column: 1 / -1;
+}
+
+/* Card thu gọn cao bằng nhau tuyệt đối (không chỉ bằng nhau trong 1 hàng) —
+   title tối đa 2 dòng, tóm tắt tối đa 3 dòng đều bị cắt bớt bằng "…" nếu dài
+   hơn, để lưới 7 mục nhìn như 1 bộ hồ sơ đồng khổ thay vì cao thấp lệch nhau
+   theo độ dài câu chữ. Chỉ áp dụng khi đóng — khi mở (.is-open) card tự do
+   theo nội dung như trước. */
+.rule-block:not(.is-open) {
+    display: flex;
+    flex-direction: column;
+    height: 186px;
+    overflow: hidden;
+}
+
+.rule-block:not(.is-open) .rule-block-title-wrap {
+    flex-shrink: 0;
+}
+
+.rule-block-title-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .rule-block-title-wrap {
@@ -3006,18 +3166,40 @@ body,
 }
 
 /* Nhãn nhỏ đánh dấu 2-3 mục "phải biết trước khi chơi" (vd Cơ chế chiến đấu)
-   để nổi bật hơn 1 chút so với các mục còn lại vốn chỉ mang tính tra cứu. */
+   giờ là 1 con dấu mực nghiêng — viền đôi kiểu stamp, chữ mono giãn cách,
+   "đóng dấu" bằng animation khi trang vừa tải để bắt mắt hơn 1 pill thường. */
 .rule-block-badge {
-    padding: 2px 9px;
-    border: 1px solid var(--rule-accent, var(--brand-orange));
-    border-radius: var(--r-pill);
+    position: relative;
+    padding: 3px 10px;
+    border: 1.5px solid var(--rule-accent, var(--brand-orange));
+    border-radius: 3px;
+    outline: 1px solid color-mix(in srgb, var(--rule-accent, var(--brand-orange)) 45%, transparent);
+    outline-offset: 2px;
     color: var(--rule-accent, var(--brand-orange));
-    font-family: var(--font-body);
+    background: color-mix(in srgb, var(--rule-accent, var(--brand-orange)) 8%, transparent);
+    font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 700;
-    letter-spacing: 0.4px;
+    letter-spacing: 1px;
     text-transform: uppercase;
     white-space: nowrap;
+    transform: rotate(-4deg);
+    animation: stampIn 0.5s cubic-bezier(0.2, 1.6, 0.4, 1) both;
+    animation-delay: 0.2s;
+}
+
+@keyframes stampIn {
+    from {
+        opacity: 0;
+        transform: rotate(-4deg) scale(2.2);
+    }
+    60% {
+        opacity: 1;
+    }
+    to {
+        opacity: 1;
+        transform: rotate(-4deg) scale(1);
+    }
 }
 
 .rule-block-chevron {
@@ -3038,6 +3220,10 @@ body,
     font-size: 13px;
     line-height: 1.5;
     color: rgba(255, 255, 255, 0.5);
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 /* Kỹ thuật grid-template-rows 0fr → 1fr để có animation mở/đóng mượt mà mà
@@ -3105,6 +3291,95 @@ body,
     list-style: disc;
 }
 
+/* Cheat-sheet "Đội hình" — thay 3 câu văn xuôi lồng điều kiện bằng bảng tra
+   nhanh, vì đây là loại luật hay phải tra lại giữa ván chứ không đọc 1 lần. */
+.formation-subhead {
+    display: block;
+    margin: var(--sp-3) 0 6px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--dossier);
+}
+
+.formation-subhead:first-child {
+    margin-top: 0;
+}
+
+.formation-swap-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.formation-swap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 12px;
+    border: 1px dashed var(--dossier-dim);
+    border-radius: var(--r-md);
+    background: var(--bg-panel);
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.formation-swap-limit {
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--dossier);
+    white-space: nowrap;
+}
+
+.formation-overflow-table {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.formation-overflow-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 12px;
+    padding: 10px 12px;
+    border: 1px dashed var(--dossier-dim);
+    border-left: 3px solid var(--dossier);
+    border-radius: var(--r-md);
+    background: var(--bg-panel);
+}
+
+.formation-overflow-subject {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 13px;
+    color: #fff;
+}
+
+.formation-overflow-subject small {
+    font-weight: 500;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.formation-overflow-rule {
+    font-size: 13px;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+@media (max-width: 560px) {
+    .formation-overflow-row {
+        grid-template-columns: 1fr;
+    }
+}
+
 .deck-chip-row {
     display: flex;
     flex-wrap: wrap;
@@ -3129,6 +3404,195 @@ body,
     border-color: var(--hair);
     color: rgba(255, 255, 255, 0.65);
     background: var(--bg-panel);
+}
+
+/* Khung "sổ tay trinh sát" (blueprint/dossier) — 4 vệt góc kiểu ống ngắm +
+   nhãn "FIG. xx" mono, không viền kín để tránh chồng viền với card cha; dùng
+   cho 3 khối minh hoạ trực quan nhất trong Luật chơi (Cách đọc lá bài, Ví dụ
+   chiến đấu, Cheat-sheet đội hình). */
+.dossier-frame {
+    position: relative;
+    padding: 20px;
+    background: linear-gradient(
+        160deg,
+        color-mix(in srgb, var(--dossier) 7%, transparent),
+        transparent 65%
+    );
+}
+
+.dossier-corner {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--dossier);
+    opacity: 0.85;
+    transition: transform 0.3s cubic-bezier(0.3, 1.4, 0.4, 1);
+}
+
+/* Bên trong 1 khối luật: góc ẩn khi card đang đóng rồi "vẽ dần" ra khi mở,
+   mô phỏng cảm giác ống ngắm khoá nét vào đúng tài liệu đang xem. Dossier
+   frame đứng độc lập (vd khối "Vai trò của bạn" ở Cốt truyện) không nằm
+   trong .rule-block nên không bị luật này chi phối — hiện sẵn bình thường. */
+.rule-block:not(.is-open) .dossier-corner {
+    transform: scale(0);
+}
+
+.dossier-corner--tl {
+    top: 0;
+    left: 0;
+    border-right: none;
+    border-bottom: none;
+    transform-origin: top left;
+}
+
+.dossier-corner--tr {
+    top: 0;
+    right: 0;
+    border-left: none;
+    border-bottom: none;
+    transform-origin: top right;
+}
+
+.rule-block.is-open .dossier-corner--tr {
+    transition-delay: 0.06s;
+}
+
+.dossier-corner--bl {
+    bottom: 0;
+    left: 0;
+    border-right: none;
+    border-top: none;
+    transform-origin: bottom left;
+}
+
+.rule-block.is-open .dossier-corner--bl {
+    transition-delay: 0.12s;
+}
+
+.dossier-corner--br {
+    bottom: 0;
+    right: 0;
+    border-left: none;
+    border-top: none;
+    transform-origin: bottom right;
+}
+
+.rule-block.is-open .dossier-corner--br {
+    transition-delay: 0.18s;
+}
+
+.dossier-caption {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.dossier-fig {
+    padding: 2px 7px;
+    border: 1px solid var(--dossier-dim);
+    color: var(--dossier);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.dossier-title {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* "Cách đọc 1 lá bài" — mini-card chú thích đặt trước danh sách loại lá, dạy
+   người mới nhận icon/chỉ số trước khi đọc luật chi tiết (tham khảo cách
+   quychien.com/guide làm phần "Cấu trúc lá bài"). */
+.card-anatomy {
+    margin-bottom: var(--sp-4);
+}
+
+.card-anatomy-body {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--sp-4);
+    margin-top: 10px;
+}
+
+/* Khung ảnh thẻ thật + pin số đè lên đúng vùng cần chú thích (toạ độ % lấy
+   từ storyRulesContent.js, đo tay trên ảnh gốc) — position:relative để pin
+   luôn đúng vị trí bất kể ảnh co giãn theo màn hình. */
+.card-anatomy-frame {
+    position: relative;
+    width: 220px;
+    flex-shrink: 0;
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    border: 1px dashed var(--dossier-dim);
+}
+
+.card-anatomy-frame img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* Tem cắt góc (stencil tag) kiểu ghi chú thực địa thay vì chấm tròn thường —
+   clip-path bấm 2 góc chéo, số dùng font mono cho đúng chất "sổ tay". */
+.card-anatomy-pin {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    transform: translate(-50%, -50%);
+    clip-path: polygon(30% 0, 100% 0, 100% 70%, 70% 100%, 0 100%, 0 30%);
+    background: var(--dossier);
+    color: #1a1200;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.55);
+}
+
+.card-anatomy-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+    min-width: 220px;
+    padding-left: 0;
+    list-style: none;
+}
+
+.card-anatomy-legend li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.card-anatomy-legend-num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin-top: 1px;
+    clip-path: polygon(30% 0, 100% 0, 100% 70%, 70% 100%, 0 100%, 0 30%);
+    border: 1px solid var(--dossier);
+    color: var(--dossier);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
 }
 
 .card-type-list {
@@ -3197,6 +3661,89 @@ body,
     font-style: italic;
 }
 
+/* Ảnh thẻ Thám hiểm thật (Quái vật/Sự kiện/Lựa chọn) ngay trong luật — thay
+   cho việc phải rời trang qua Showcase mới thấy mặt thẻ trông ra sao. */
+.card-type-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 12px;
+}
+
+/* Ảnh minh hoạ giờ trông như ảnh polaroid ghim trong hồ sơ — nền giấy trắng
+   ngà, hơi nghiêng ngẫu nhiên mỗi tấm, có "băng dính" ở mép trên, thẳng lại
+   và nổi lên khi hover như đang cầm lên xem gần hơn. */
+.card-type-gallery-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 132px;
+    margin: 10px 0 0;
+    padding: 8px 8px 10px;
+    background: #f2ede0;
+    border-radius: 2px;
+    box-shadow:
+        0 10px 20px -10px rgba(0, 0, 0, 0.65),
+        0 1px 0 rgba(255, 255, 255, 0.5) inset;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.card-type-gallery-item:nth-child(3n + 1) {
+    transform: rotate(-4deg);
+}
+
+.card-type-gallery-item:nth-child(3n + 2) {
+    transform: rotate(3deg);
+}
+
+.card-type-gallery-item:nth-child(3n + 3) {
+    transform: rotate(-2deg);
+}
+
+.card-type-gallery-item::before {
+    content: "";
+    position: absolute;
+    top: -7px;
+    left: 50%;
+    width: 34px;
+    height: 14px;
+    background: rgba(255, 255, 255, 0.35);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    transform: translateX(-50%) rotate(-3deg);
+}
+
+.card-type-gallery-item:hover {
+    transform: rotate(0deg) translateY(-4px) scale(1.04);
+    box-shadow:
+        0 16px 28px -10px rgba(0, 0, 0, 0.75),
+        0 1px 0 rgba(255, 255, 255, 0.5) inset;
+    z-index: 2;
+}
+
+/* Ảnh thẻ thật theo đúng tỉ lệ 2:3 (khớp ảnh gốc ~794x1191) thay vì crop
+   vuông — crop vuông trước đây cắt mất phần lớn mặt thẻ, khó nhận ra là thẻ gì. */
+.card-type-gallery-item img {
+    display: block;
+    width: 116px;
+    aspect-ratio: 2 / 3;
+    border-radius: 1px;
+    object-fit: cover;
+    background: #000;
+}
+
+.card-type-gallery-item figcaption {
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.3px;
+    line-height: 1.3;
+    color: #302a1c;
+    text-align: center;
+}
+
 .card-type-link {
     display: inline-flex;
     align-items: center;
@@ -3243,27 +3790,102 @@ body,
 
 .combat-example {
     margin-top: var(--sp-3);
-    padding: var(--sp-3) 14px;
-    border: 1px dashed var(--hair);
-    border-radius: var(--r-md);
-    background: rgba(255, 255, 255, 0.02);
-}
-
-.combat-example-label {
-    display: block;
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: 11.5px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--strategy-light);
-    margin-bottom: 4px;
 }
 
 .combat-example p {
     font-size: 13px;
     line-height: 1.6;
     color: rgba(255, 255, 255, 0.75);
+}
+
+/* Bảng so sánh A/B thay cho đoạn văn liệt kê 5 hiệp — quét theo cột thay vì
+   phải đọc từng câu "hiệp X: a > b". */
+.combat-table-wrap {
+    overflow-x: auto;
+}
+
+.combat-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: var(--sp-2);
+}
+
+.combat-table th,
+.combat-table td {
+    padding: 7px 10px;
+    border: 1px dashed var(--dossier-dim);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.combat-table thead th {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+}
+
+.combat-table tbody th {
+    text-align: left;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.combat-table td {
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 600;
+}
+
+.combat-table td.is-win {
+    color: #1a1200;
+    background: var(--dossier);
+    font-weight: 700;
+}
+
+.combat-table td.is-tie {
+    color: rgba(255, 255, 255, 0.45);
+    font-weight: 500;
+}
+
+/* Thanh chỉ số nhỏ dưới mỗi con số — chỉ mang tính minh hoạ trực quan độ
+   chênh lệch, không phải thang điểm luật. Nằm im (width:0) khi card đang
+   đóng, "chạy" ra khi mở card để bảng cảm giác như đang được tính toán trực
+   tiếp thay vì 1 bảng số tĩnh. */
+.combat-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.combat-cell-value {
+    font-variant-numeric: tabular-nums;
+}
+
+.combat-cell-bar {
+    display: block;
+    height: 3px;
+    width: 0%;
+    border-radius: 2px;
+    background: currentColor;
+    opacity: 0.5;
+    transition: width 0.5s ease 0.1s;
+}
+
+.rule-block.is-open .combat-cell-bar {
+    width: var(--bar-pct, 0%);
+}
+
+.combat-table td.is-win .combat-cell-bar {
+    opacity: 0.85;
+}
+
+.combat-example-result {
+    margin-top: 2px;
 }
 
 .penalty-list {

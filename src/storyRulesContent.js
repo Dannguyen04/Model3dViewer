@@ -58,15 +58,84 @@ export const TURN_FLOW = [
 export const ROUND_NOTE =
     "Một khi bạn rút 1 trong 3 bộ bài [Thám hiểm], vòng của bạn bắt đầu. Vòng kết thúc khi đến lượt bạn rút bài lần tiếp theo.";
 
-export const FORMATION = [
-    "Đội hình tối đa 4 [Hero], chia 2 đội: Đội thực địa (2 Hero, trực tiếp chiến đấu) và Đội hậu cần (2 Hero, không tính chỉ số, chỉ dự bị/hỗ trợ).",
-    "Sau khi rút [Thám hiểm], có thể hoán đổi vị trí 1 Hero thực địa ↔ hậu cần (tối đa 1 lần/vòng) và hoán đổi [Trang bị] giữa các Hero (tối đa 2 lần/vòng).",
-    "Đội đã đủ 4 Hero mà rút thêm 1 Hero mới: muốn nhận phải bỏ 1 Hero hiện tại — mọi lá [Phát triển] gắn trên Hero bị bỏ cũng mất theo.",
-    "Hero đã đủ 2 lá [Trang bị] mà rút thêm: muốn nhận phải bỏ 1 lá [Trang bị] đang có.",
-    "Hero đã đủ 3 lá [Phát triển] mà rút thêm lá [Phát triển] thường: không có cách nào nhận — chỉ [Phát triển đặc biệt] mới 'ghi đè' được (và không đè lên [Phát triển đặc biệt] khác).",
+export const FORMATION_INTRO =
+    "Đội hình tối đa 4 [Hero], chia 2 đội: Đội thực địa (2 Hero, trực tiếp chiến đấu) và Đội hậu cần (2 Hero, không tính chỉ số, chỉ dự bị/hỗ trợ).";
+
+// Giới hạn hoán đổi mỗi vòng — tách riêng thành bảng nhỏ vì đây là 2 con số
+// người chơi hay quên nhất giữa ván (đổi được mấy lần rồi nhỉ?).
+export const FORMATION_SWAPS = [
+    {
+        label: "Hoán đổi vị trí Hero (thực địa ↔ hậu cần)",
+        limit: "Tối đa 1 lần / vòng",
+    },
+    { label: "Hoán đổi [Trang bị] giữa các Hero", limit: "Tối đa 2 lần / vòng" },
+];
+
+// Cheat-sheet "rút thêm khi đã đầy thì sao" — gộp lại thành bảng tra nhanh
+// theo từng loại thẻ, thay vì 3 câu văn xuôi rời rạc.
+export const FORMATION_OVERFLOW = [
+    {
+        subject: "[Hero]",
+        limit: "Đội đã đủ 4 Hero",
+        rule: "Rút thêm 1 Hero mới: muốn nhận phải bỏ 1 Hero hiện tại — mọi lá [Phát triển] gắn trên Hero bị bỏ cũng mất theo.",
+    },
+    {
+        subject: "[Trang bị]",
+        limit: "Hero đã đủ 2 lá Trang bị",
+        rule: "Rút thêm: muốn nhận phải bỏ 1 lá [Trang bị] đang có.",
+    },
+    {
+        subject: "[Phát triển]",
+        limit: "Hero đã đủ 3 lá Phát triển",
+        rule: "Rút thêm lá [Phát triển] thường: không có cách nào nhận — chỉ [Phát triển đặc biệt] mới 'ghi đè' được (và không đè lên [Phát triển đặc biệt] khác).",
+    },
 ];
 
 // -- Cột phải: thành phần & cơ chế (lá bài -> chiến đấu -> hình phạt) --
+
+// "Cách đọc 1 lá bài" — chú thích trực tiếp lên 1 lá Thám hiểm thật (thay vì
+// ảnh nhân vật Hero, vốn chỉ là artwork rời không có khung/tên/số in sẵn).
+// Lá "Chất nhờn vô hại" (ADVENTURE 1) được chọn vì có đủ khung, 5 ô chỉ số
+// màu và khối "Loại lá / Hiệu ứng" — đại diện tốt cho bố cục chung của cả bộ
+// Thám hiểm. Vị trí top/left (%) của mỗi pin đo tay trên ảnh gốc 794x1191,
+// đối chiếu chéo với lá "Nấm đột biến" (ADVENTURE 2) để xác nhận màu ↔ chỉ số:
+// xanh lá (trên-trái) = VIT, tím (dưới-trái) = CTR, đỏ (trên-phải) = STR,
+// xanh dương (dưới-phải) = INT, vàng (giữa) = LUK — khớp đúng ở cả 2 lá.
+export const CARD_ANATOMY = {
+    cardName: "Chất nhờn vô hại",
+    deck: "ADVENTURE 1",
+    legend: [
+        { n: 1, top: 6, left: 50, label: "Tên lá", desc: "Tên riêng của lá bài." },
+        {
+            n: 2,
+            top: 28,
+            left: 30,
+            label: "Ảnh minh hoạ",
+            desc: "Hình vẽ nhân vật hoặc sinh vật in trên lá.",
+        },
+        {
+            n: 3,
+            top: 55,
+            left: 50,
+            label: "5 ô chỉ số màu",
+            desc: 'VIT xanh lá (trên-trái) · CTR tím (dưới-trái) · STR đỏ (trên-phải) · INT xanh dương (dưới-phải) · LUK vàng (giữa) — dùng để so từng hiệp khi Chiến đấu, xem mục "Cơ chế chiến đấu" bên dưới.',
+        },
+        {
+            n: 4,
+            top: 70,
+            left: 20,
+            label: "Loại lá & phân loại bộ",
+            desc: 'Vd "Quái vật" thuộc bộ "Thám hiểm 1" — cho biết cách xử lý lá và rút từ bộ nào.',
+        },
+        {
+            n: 5,
+            top: 84,
+            left: 15,
+            label: "Hiệu ứng thắng / thua",
+            desc: "Phần thưởng khi thắng, hình phạt khi thua (nếu có) — ghi rõ ngay trên lá.",
+        },
+    ],
+};
 
 export const CARD_TYPES = [
     {
@@ -96,6 +165,9 @@ export const CARD_TYPES = [
                 desc: "Đưa ra 3 phương án, chỉ được chọn và thực hiện 1 trong số đó.",
             },
         ],
+        // Suy ra từ chỉ số quái vật trong data.js (không phải luật gốc) —
+        // ghi rõ "ước tính" để không bị hiểu nhầm là số liệu chính thức.
+        note: "Ước tính từ chỉ số quái vật trong bộ dữ liệu thẻ (chưa đối chiếu luật gốc): Thám hiểm 1 dễ nhất, phù hợp làm quen; Thám hiểm 2 và 3 tăng dần độ khó, Thám hiểm 3 có những quái mạnh nhất bộ.",
     },
     {
         key: "equipment",
@@ -143,8 +215,13 @@ export const COMBAT = {
     ],
     scoring:
         "Chỉ số đem so sánh = tổng chỉ số đó của 2 Hero Đội thực địa, cộng/trừ thêm từ [Trang bị], [Phát triển]... mà 2 Hero đó đang sở hữu.",
-    example:
-        "Đội A (VIT 8, CTR 5, STR 6, INT 4, LUK 3) đấu Đội B (VIT 6, CTR 7, STR 6, INT 5, LUK 2). Hiệp VIT: 8 > 6 → A được điểm. Hiệp CTR: 5 < 7 → B được điểm. Hiệp STR: 6 = 6 → hoà, không ai được điểm. Hiệp INT: 4 < 5 → B được điểm. Hiệp LUK: 3 > 2 → A được điểm. Kết quả 2-2 → hoà chung cuộc, không bên nào bị phạt hay được thưởng.",
+    // Dạng bảng (thay vì văn xuôi liệt kê 5 hiệp) để so trực tiếp theo cột —
+    // powers khớp thứ tự với COMBAT.order (VIT, CTR, STR, INT, LUK).
+    example: {
+        teamA: { label: "Đội A", powers: [8, 5, 6, 4, 3] },
+        teamB: { label: "Đội B", powers: [6, 7, 6, 5, 2] },
+        result: "Kết quả 2-2 → hoà chung cuộc, không bên nào bị phạt hay được thưởng.",
+    },
 };
 
 export const PENALTIES = [
