@@ -7,12 +7,14 @@ import { useSyncExternalStore, useCallback } from "react";
 //   #/c/<id>          -> hồ sơ nhân vật
 //   #/c/<id>/3d       -> xem 3D
 //   #/rules           -> luật chơi (kèm tóm tắt cốt truyện)
+//   #/lore            -> cốt truyện chi tiết (dòng thời gian đầy đủ)
 //   #/admin           -> trang quản trị ẩn (không có link trỏ tới, gõ tay URL)
 // ---------------------------------------------------------------------------
 function parse(hash) {
     const path = hash.replace(/^#/, "");
     if (path === "/admin") return { page: "admin", id: null, deck: null };
     if (path === "/rules") return { page: "rules", id: null, deck: null };
+    if (path === "/lore") return { page: "lore", id: null, deck: null };
     const dm = path.match(/^\/d\/([^/]+)\/?$/);
     if (dm) {
         return { page: "showcase", id: null, deck: decodeURIComponent(dm[1]) };
@@ -27,6 +29,7 @@ function parse(hash) {
 export function routeToHash({ page, id, deck }) {
     if (page === "admin") return "#/admin";
     if (page === "rules") return "#/rules";
+    if (page === "lore") return "#/lore";
     if (page === "showcase" && deck) return `#/d/${encodeURIComponent(deck)}`;
     if (page === "info") return `#/c/${id}`;
     if (page === "view3d") return `#/c/${id}/3d`;

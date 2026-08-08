@@ -47,12 +47,14 @@ import {
     Search,
     Box,
     ScrollText,
+    BookOpen,
 } from "lucide-react";
 import { CHARACTERS, SHOWCASE, accentVars, TBD } from "./data.js";
 import ModelErrorBoundary from "./ErrorBoundary.jsx";
 import { useHashRoute } from "./useHashRoute.js";
 import AdminPage from "./Admin.jsx";
 import StoryPage from "./StoryPage.jsx";
+import LorePage from "./LorePage.jsx";
 
 // Ánh xạ nhãn -> icon lucide (đồng bộ, đổi màu theo accent qua currentColor).
 const STAT_ICON = {
@@ -478,7 +480,13 @@ function CharacterCard({ character, onSelect, index }) {
     );
 }
 
-function ShowcasePage({ characters, onSelect, onOpenRules, initialDeck = "ALL" }) {
+function ShowcasePage({
+    characters,
+    onSelect,
+    onOpenRules,
+    onOpenLore,
+    initialDeck = "ALL",
+}) {
     // Danh sách deck (giữ thứ tự xuất hiện) + màu đại diện mỗi deck.
     const decks = ["ALL", ...new Set(characters.map((c) => c.deck))];
 
@@ -528,10 +536,44 @@ function ShowcasePage({ characters, onSelect, onOpenRules, initialDeck = "ALL" }
                     alt="Hero Collector"
                 />
                 <h1 className="showcase-title">Bộ Sưu Tập Nhân Vật</h1>
-                <button className="story-cta" onClick={onOpenRules}>
-                    <ScrollText size={16} strokeWidth={2.2} />
-                    Luật chơi
-                </button>
+                <div className="showcase-portal-row">
+                    <button className="showcase-portal" onClick={onOpenRules}>
+                        <span className="showcase-portal-icon">
+                            <ScrollText size={22} strokeWidth={2} />
+                        </span>
+                        <span className="showcase-portal-text">
+                            <span className="showcase-portal-title">
+                                Luật chơi
+                            </span>
+                            <span className="showcase-portal-sub">
+                                Cách chơi &amp; thẻ bài
+                            </span>
+                        </span>
+                        <ArrowRight
+                            className="showcase-portal-arrow"
+                            size={16}
+                            strokeWidth={2.4}
+                        />
+                    </button>
+                    <button className="showcase-portal" onClick={onOpenLore}>
+                        <span className="showcase-portal-icon">
+                            <BookOpen size={22} strokeWidth={2} />
+                        </span>
+                        <span className="showcase-portal-text">
+                            <span className="showcase-portal-title">
+                                Cốt truyện
+                            </span>
+                            <span className="showcase-portal-sub">
+                                Dòng thời gian đầy đủ
+                            </span>
+                        </span>
+                        <ArrowRight
+                            className="showcase-portal-arrow"
+                            size={16}
+                            strokeWidth={2.4}
+                        />
+                    </button>
+                </div>
             </header>
 
             <div className="showcase-controls">
@@ -1129,7 +1171,7 @@ export default function App() {
     // ID không hợp lệ trong URL -> đưa về showcase. "admin" không gắn với id
     // nhân vật nên phải loại trừ riêng, không thì bị đá về showcase.
     const validId = SHOWCASE.some((c) => c.id === nav.id);
-    const noIdPages = ["showcase", "admin", "rules"];
+    const noIdPages = ["showcase", "admin", "rules", "lore"];
     let page =
         !noIdPages.includes(nav.page) && !validId ? "showcase" : nav.page;
     if (page === "view3d" && character.isAdventure) page = "info";
@@ -1153,6 +1195,7 @@ export default function App() {
                     initialDeck={nav.deck}
                     onSelect={(id) => navigate({ page: "info", id })}
                     onOpenRules={() => navigate({ page: "rules" })}
+                    onOpenLore={() => navigate({ page: "lore" })}
                 />
             )}
 
@@ -1160,7 +1203,12 @@ export default function App() {
                 <StoryPage
                     onBack={() => navigate({ page: "showcase" })}
                     onViewDeck={(deck) => navigate({ page: "showcase", deck })}
+                    onOpenLore={() => navigate({ page: "lore" })}
                 />
+            )}
+
+            {page === "lore" && (
+                <LorePage onBack={() => navigate({ page: "rules" })} />
             )}
 
             {page === "info" && (

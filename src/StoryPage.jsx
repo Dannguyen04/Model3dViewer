@@ -21,6 +21,7 @@ import {
     List,
     X,
     Search,
+    History,
 } from "lucide-react";
 import { DECKS, CHARACTERS } from "./data.js";
 import {
@@ -313,7 +314,7 @@ function CardTypeEntry({ type, onViewDeck }) {
     );
 }
 
-export default function StoryPage({ onBack, onViewDeck }) {
+export default function StoryPage({ onBack, onViewDeck, onOpenLore }) {
     const loreRef = useRef(null);
     const rulesRef = useRef(null);
     const scrollRootRef = useRef(null);
@@ -466,7 +467,7 @@ export default function StoryPage({ onBack, onViewDeck }) {
                     <SectionHead
                         icon={BookOpen}
                         // kicker="Tóm tắt cốt truyện"
-                        title="Cốt Truyện"
+                        title="Tóm tắt cốt truyện"
                     />
 
                     <p className="story-lead">{STORY.intro}</p>
@@ -485,9 +486,19 @@ export default function StoryPage({ onBack, onViewDeck }) {
                         <p>{STORY.role}</p>
                     </DossierFrame>
 
-                    {/* Trang "Cốt truyện chi tiết" chưa có data/route — ẩn hẳn
-                        lối vào thay vì hiện nút disabled, tới khi nội dung đó
-                        thật sự sẵn sàng. */}
+                    {onOpenLore && (
+                        <div className="story-lore-cta-wrap">
+                            <button
+                                type="button"
+                                className="story-lore-cta"
+                                onClick={onOpenLore}
+                            >
+                                <History size={16} strokeWidth={2.2} />
+                                Xem cốt truyện chi tiết
+                                <ArrowRight size={14} strokeWidth={2.4} />
+                            </button>
+                        </div>
+                    )}
                 </section>
 
                 {/* ============================== LUẬT CHƠI ============================== */}
