@@ -175,10 +175,12 @@ function deckVars(deckKey) {
 function SectionHead({ icon: Icon, kicker, title }) {
     return (
         <div className="story-head">
-            <span className="section-kicker">
-                <Icon size={15} strokeWidth={2.4} />
-                {kicker}
-            </span>
+            {(Icon || kicker) && (
+                <span className="section-kicker">
+                    {Icon && <Icon size={15} strokeWidth={2.4} />}
+                    {kicker}
+                </span>
+            )}
             <h2 className="story-title">{title}</h2>
         </div>
     );
@@ -444,7 +446,7 @@ export default function StoryPage({ onBack, onViewDeck, onOpenLore }) {
                 Showcase
             </button>
 
-            <div className="story-jump">
+            {/* <div className="story-jump">
                 <button
                     className="story-jump-chip"
                     onClick={() => scrollTo(loreRef)}
@@ -459,13 +461,12 @@ export default function StoryPage({ onBack, onViewDeck, onOpenLore }) {
                     <ScrollText size={14} strokeWidth={2.2} />
                     <span>Luật chơi</span>
                 </button>
-            </div>
+            </div> */}
 
             <div className="story-scroll" ref={scrollRootRef}>
                 {/* ===================== CỐT TRUYỆN (tóm tắt mở đầu) ===================== */}
                 <section ref={loreRef} className="story-section story-intro">
                     <SectionHead
-                        icon={BookOpen}
                         // kicker="Tóm tắt cốt truyện"
                         title="Tóm tắt cốt truyện"
                     />
@@ -504,7 +505,6 @@ export default function StoryPage({ onBack, onViewDeck, onOpenLore }) {
                 {/* ============================== LUẬT CHƠI ============================== */}
                 <section ref={rulesRef} className="story-section rules-section">
                     <SectionHead
-                        icon={ScrollText}
                         // kicker="Luật chơi"
                         title="Luật Chơi"
                     />
